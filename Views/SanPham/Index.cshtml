@@ -1,0 +1,279 @@
+﻿@model X.PagedList.IPagedList<QuanLyBanGiay_ADMIN.Models.HienThiSanPham>
+@using X.PagedList.Mvc.Core
+@using X.PagedList.Web.Common;
+@*@model IEnumerable<QuanLyBanGiay_ADMIN.Models.HienThiSanPham>*@
+@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Views/Shared/_LayoutAdmin.cshtml";
+}
+@{
+    int startIndex = (Model.PageNumber - 1) * Model.PageSize + 1;
+    int endIndex = startIndex + Model.Count - 1;
+    
+}
+<style>
+    .product-image {
+        max-width: 100px;
+        max-height: 100px;
+    }
+
+    .custom-btn:active {
+        background-color: red; /* Màu nền khi nút được nhấn */
+        border-color: red; /* Màu viền khi nút được nhấn */
+        color: white; /* Màu chữ khi nút được nhấn */
+    }
+
+    #lst tbody tr:hover {
+        background-color: coral;
+    }
+
+    .table td, .table th {
+        padding: 0.25rem;
+        width:auto;
+        vertical-align: middle;
+        border-top: 1px solid #dee2e6;
+    }
+</style>
+
+<div class="container">
+    <div class="row">
+        <div class="col-22 offset">
+            <h1 class="text-info text-center p-1 border border-dark">DANH SÁCH SẢN PHẨM</h1>
+            @*<form action="~/SanPham/Index" method="post">
+                <div class="row" >
+                    <input type="submit" class="btn btn-sm btn-warning m-1 p-1 text-light custom-btn" value="BitisHunter" name="Ten_Nhasanxuat"><br />
+                    <input type="submit" class="btn btn-sm btn-warning m-1 p-1 text-light custom-btn" value="NIKE" name="Ten_Nhasanxuat"><br />
+                    <input type="submit" class="btn btn-sm btn-warning m-1 p-1 text-light custom-btn" value="Mizuno" name="Ten_Nhasanxuat"><br />
+                    <input type="submit" class="btn btn-sm btn-warning m-1 p-1 text-light custom-btn" value="Adidas" name="Ten_Nhasanxuat"><br />
+                </div>
+            </form>
+            <form action="~/SanPham/Index" method="post">
+                <div class="row" >
+                    <div class="form-group">
+                        <input type="Text" id="enter" name="Ten_Nhasanxuat" value="@ViewBag.TenNSX" readonly hidden>
+                        <input type="Text" id="enter" name="Ten_Sanpham" placeholder="enter here">
+                        <button class="btn btn-sm btn-primary m-1 p-1 text-light custom-btn"><i class="fa-solid fa-magnifying-glass"></i></button>
+                    </div><hr />
+                </div>
+            </form>*@
+
+                    <form action="~/SanPham/Index" method="post">
+                <div class="row">
+                        <style>
+                            ul li {
+                                list-style-type: none;
+                            }
+
+                        .card {
+                            width: auto;
+                            border: 1px solid #ccc;
+                        }
+
+                        .card-header {
+                            background-color: #f0f0f0;
+                            padding: 10px;
+                            cursor: pointer;
+                        }
+
+                        .card-body {
+                            display: none;
+                            padding: 10px;
+                        }
+
+                        .card:hover .card-body {
+                            display: block;
+                        }
+
+
+                    </style>
+
+                    <section class="content">
+                        <div class="container-fluid">
+                            <div class="row">
+                                <div class="col-12">
+
+                                    <div class="card" onmouseenter="toggleCardBody(true)" onmouseleave="toggleCardBody(false)">
+                                        <div class="card-header" id="searchCard" >
+                                            <h3 class="card-title">TÌM KIẾM NÂNG CAO</h3>
+                                            @*<div class="card-tools">
+                                                <button type="button" class="btn btn-tool" data-card-widget="collapse" title="Collapse">
+                                                    <i class="fas fa-plus"></i>
+                                                </button>
+                                            </div>*@
+                                        </div>
+                                        <div class="card-body" id="advancedSearch" style="display:none">
+                                            <table style="border-right-color: forestgreen">
+                                                <thead class="bg-primary text-light">
+                                                    <tr style="text-align: center">
+                                                        <th>
+                                                            Hãng sản xuất
+                                                        </th>
+                                                        <th>
+                                                            Loại giày
+                                                        </th>
+                                                        <th>
+                                                            Size
+                                                        </th>
+                                                        <th>
+                                                            Giá
+                                                        </th>
+                                                        <th>
+                                                            <button class="btn btn-sm btn-warning m-1 p-1 text-light custom-btn"><i class="fa-solid fa-magnifying-glass"></i></button>
+                                                        </th>
+                                                    </tr>
+                                                </thead>
+
+                                                <tr>
+                                                    <td>
+                                                        <ul>
+                                                            <li class="filter-list"><input class="pixel-radio" type="radio" id="apple" value="BitisHunter" name="Ten_Nhasanxuat"> BitisHunter</li>
+                                                            <li class="filter-list"><input class="pixel-radio" type="radio" id="asus" value="NIKE" name="Ten_Nhasanxuat"> Nike</li>
+                                                            <li class="filter-list"><input class="pixel-radio" type="radio" id="gionee" value="Mizuno" name="Ten_Nhasanxuat"> Mizuno</li>
+                                                            <li class="filter-list"><input class="pixel-radio" type="radio" id="micromax" value="Adidas" name="Ten_Nhasanxuat"> Adidas</li>
+
+                                                        </ul>
+                                                    </td>
+                                                    <td style="padding-left:80px">
+                                                        <ul>
+                                                            <li class="filter-list"><input class="pixel-radio" type="radio" id="apple" value="Giày bóng đá" name="Ten_loai"> Giày bóng đá</li>
+                                                            <li class="filter-list"><input class="pixel-radio" type="radio" id="asus" value="Giày thời trang" name="Ten_loai"> Giày thời trang</li>
+                                                            <li class="filter-list"><input class="pixel-radio" type="radio" id="gionee" value="Giày đi bộ" name="Ten_loai"> Giày đi bộ</li>
+                                                            <li class="filter-list"><input class="pixel-radio" type="radio" id="micromax" value="Giày cầu lông, bóng chuyền" name="Ten_loai"> Giày cầu lông, bóng chuyền</li>
+                                                        </ul>
+                                                    </td>
+                                                    <td>
+                                                        <ul>
+                                                            <li class="filter-list"><input class="pixel-radio" type="radio" id="apple" value="39" name="size"> 39</li>
+                                                            <li class="filter-list"><input class="pixel-radio" type="radio" id="asus" value="40" name="size"> 40</li>
+                                                            <li class="filter-list"><input class="pixel-radio" type="radio" id="gionee" value="41" name="size"> 41</li>
+                                                            <li class="filter-list"><input class="pixel-radio" type="radio" id="micromax" value="42" name="size"> 42</li>
+                                                            <li class="filter-list"><input class="pixel-radio" type="radio" id="micromax" value="43" name="size"> 43</li>
+                                                            <li class="filter-list"><input class="pixel-radio" type="radio" id="micromax" value="44" name="size"> 44</li>
+                                                        </ul>
+                                                    </td>
+                                                    <td style="padding-left:80px">
+                                                        <ul>
+                                                            <li class="filter-list"><input class="pixel-radio" type="radio" id="apple" value="1" name="dieukien"> nhỏ hơn 1.000.000</li>
+                                                            <li class="filter-list"><input class="pixel-radio" type="radio" id="asus" value="2" name="dieukien"> từ 1.000.000 đến 3.000.000</li>
+                                                            <li class="filter-list"><input class="pixel-radio" type="radio" id="gionee" value="3" name="dieukien"> lớn hơn 3.000.000</li>
+                                                        </ul>
+                                                    </td>
+
+                                                </tr>
+                                            </table>
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>
+                    </section> 
+                
+                </div>
+                
+                    </form>
+
+
+            
+            <table id="lst" class="table table-bordered text-center">
+                <thead class="bg-dark text-light" >
+                    <tr>
+                        <th>Mã sản phẩm</th>
+                        <th>Tên sản phẩm</th>
+                        <th>Màu sắc</th>
+                        <th>Hãng sản xuất</th>
+                        <th>Loại giày</th>
+                        <th colspan="3">Ảnh</th>
+                        <th>Size</th>
+                        <th>Số lượng</th>
+                        <th>Giá gốc</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody >
+                    @foreach (var d in Model)
+                    {
+                        <tr>
+                            
+                            <td>@d.Ma_Sanpham</td>
+                            <td>@d.Ten_Sanpham</td>
+                            <td>@d.Mausac</td>
+                            <td>@d.Ten_Nhasanxuat</td>
+                            <td>@d.Ten_loai</td>
+                            <td>
+                                <img class="product-image" src="~/img/product/@d.Link1" />
+                            </td>
+                            <td>
+                                <img class="product-image" src="~/img/product/@d.Link2" />
+                            </td>
+                            <td>
+                                <img class="product-image" src="~/img/product/@d.Link3" />
+                            </td>
+                            <td><a asp-action="Size_SoLuong" asp-controller="SanPham" asp-route-Ma_SanPham="@d.Ma_Sanpham">@d.All_Size</a></td>
+                            <td>@d.So_Luong</td>
+                            <td>@string.Format("{0:N0}", d.Giagoc)</td>
+                            <td>
+                                <a class="btn btn-sn btn-primary" asp-action="Details" asp-controller="SanPham" asp-route-MaSanpham="@d.Ma_Sanpham">Details</a>
+                                <a onclick="Hoi(event)" type="submit" class="btn btn-primary" style="background-color:red" asp-action="DeleteSanPham" asp-controller="SanPham" asp-route-MaSanpham="@d.Ma_Sanpham">Delete</a>
+                            </td>
+                            
+                        </tr>
+                    }
+
+                </tbody>
+            </table>
+
+        </div>
+    </div>
+</div>
+<div class="page-info" style="text-align:center">
+    Trang @(Model.PageNumber) trên @Model.PageCount<br />
+
+        <p style="color:forestgreen">
+            Sản phẩm từ @startIndex => @endIndex trên @Model.TotalItemCount sản phẩm
+        </p>
+
+</div>
+<div class="card-tools">
+    <ul class="pagination pagination-sm">
+        @Html.PagedListPager(Model,page=>Url.Action("Index","SanPham",new{page = page,Ten_Nhasanxuat = ViewBag.TenNSX, Ten_Loai = ViewBag.TenLoai, dieukien = ViewBag.Dieukien, size = ViewBag.Size}), new PagedListRenderOptions{
+        LiElementClasses = new string[] {"page-item"},
+        PageClasses = new string[] {"page-link"},
+        Display = PagedListDisplayMode.IfNeeded,
+        MaximumPageNumbersToDisplay = 3, // Số trang tối đa để hiển thị
+        EllipsesFormat = "&#8230;", // Định dạng dấu ba chấm
+        })
+    </ul>
+    
+</div>
+
+<script>
+    function Hoi(event){
+        var result = confirm("Bạn có chắc chắn xóa sản phẩm?");
+        if (result == true) {
+            
+        }
+        else {
+            event.preventDefault();
+           // window.location.href='../SanPham/Index';
+        }
+    }
+
+    function toggleCardBody(show) {
+        var cardBody = document.getElementById("advancedSearch");
+        cardBody.style.display = show ? "block" : "none";
+    }
+
+</script>
+<script src="js/vendor/jquery-2.2.4.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.11.0/umd/popper.min.js" integrity="sha384-b/U6ypiBEHpOf/4+1nzFpr53nxSS+GLCkfwBdFNTxtclqqenISfwAzpKaMNFNmj4"
+        crossorigin="anonymous"></script>
+<script src="js/vendor/bootstrap.min.js"></script>
+<script src="js/jquery.ajaxchimp.min.js"></script>
+<script src="js/jquery.nice-select.min.js"></script>
+<script src="js/jquery.sticky.js"></script>
+<script src="js/nouislider.min.js"></script>
+<script src="js/jquery.magnific-popup.min.js"></script>
+<script src="js/owl.carousel.min.js"></script>
+
+

@@ -1,0 +1,79 @@
+﻿@model QuanLyBanGiay_ADMIN.Models.ThongTinNguoiDung
+@{
+    ViewData["Title"] = "UpdateNguoiDung";
+    Layout = "~/Views/Shared/_LayoutAdmin.cshtml";
+}
+
+
+<div class="container">
+    <div class="row">
+        <div class="col-8 offset-2">
+            <div class="card">
+                <div class="card-header">
+                    <h2 class="text-info">Update Tài Khoản</h2>
+                    <a href="~/NguoiDung/Index"><u style="color: blue">Back to List</u></a>
+                </div>
+                <div class="card-body">
+                    <form method="post" asp-action="UpdateNguoiDung">
+                        <div class="form-group">
+                            <label for="exampleInputEmail1">Mã người dùng</label>
+                            <input type="text" class="form-control" asp-for="MaNguoidung" readonly>
+                        </div>
+                        <div class="form-group">
+                            <label for="exampleInputEmail1">Username</label>
+                            <input type="text" class="form-control" asp-for="Username" readonly>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="exampleInputEmail1">Password</label>
+                            <input type="text" class="form-control" asp-for="Password">
+                        </div>
+                        <div class="form-group">
+                            <label for="exampleInputEmail1">Tên người dùng</label>
+                            <input type="text" class="form-control" asp-for="TenNguoidung">
+                        </div>
+                        <div class="form-group">
+                            <select asp-for="Gioitinh" id="name" class="form-select form-select-lg mb-3 form-control" onfocus="this.placeholder = ''" onblur="this.placeholder = 'Giới tính'">
+                                <option selected>Giới tính</option>
+                                <option value="Nam">Nam</option>
+                                <option value="Nữ">Nữ</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="exampleInputEmail1">Chức vụ</label>
+                            @Html.DropDownList( "MaChucvu", new SelectList( ViewBag.depar_data,"MaChucvu","TenChucVu") )
+                            
+                        </div>
+                        <div class="form-group">
+                            <label for="exampleInputEmail1">Số điện thoại</label>
+                            <input type="number" id="sdt" class="form-control" asp-for="SodienthoaiNv">
+                        </div>
+                        <div class="form-group">
+                            <label for="exampleInputEmail1">Địa chỉ</label>
+                            <input type="text" class="form-control" asp-for="DiachiNv">
+                        </div>
+                        <br />
+                        <button type="submit" class="btn btn-primary" onclick="ThongBao()">SAVE</button>
+                        <button type="submit" class="btn btn-primary" style="background-color:red" asp-action="DeleteNguoiDung" asp-controller="NguoiDung">Delete</button>
+
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    function ThongBao() {
+        var sdt = document.getElementById("sdt");
+        if ( /(84|0[3|5|7|8|9])+([0-9]{8})\b/.test(sdt.value) == false) {
+            sdt.value = "";
+            sdt.innerText = sdt.value;
+            window.alert("Kiểm tra lại thông tin thay đổi !!!")
+        }
+        else {
+            window.alert("Lưu thành công !!!");
+        }
+
+    }
+</script>

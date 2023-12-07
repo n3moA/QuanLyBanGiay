@@ -1,0 +1,46 @@
+﻿@model QuanLyBanGiay_ADMIN.Models_User.Cart
+
+<div class="col-lg-6" style="margin-top:27px;">
+    <div class="order_box">
+        <h2>Hóa đơn của bạn</h2>
+        <table class="table table-borderless">
+            <thead>
+                <tr>
+                    <th>Tên sản phẩm</th>
+                    <th style="text-align: center;">Cỡ</th>
+                    <th style="text-align: center;">Số lượng</th>
+                    <th style="text-align: center;">Thành tiền</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model?.Lines)
+                {
+                    <tr>
+                        <td>@item.Product.TenSanpham</td>
+                        <td style="text-align: center;">@item.Product.size</td>
+                        <td style="text-align: center;">@item.Quantity</td>
+                        <td style="text-align: center;">@(((decimal)1 - (decimal)item.Product.Tilegiamgia / 100) * (decimal)item.Product.Giagoc)<span> VND</span></td>
+                    </tr>
+                }
+                <tr>
+                    <td>Tiền sản phẩm</td>
+                    <td></td>
+                    <td></td>
+                    <td style="text-align: center;">@Model.ComputeTotalValue()<span> VND</span></td>
+                </tr>
+                <tr>
+					<td>Tiền vận chuyển</td>
+                    <td></td>
+                    <td></td>
+                    <td style="text-align: center;">@(Model.Lines.Count() * 10000)<span> VND</span></td>
+                </tr>
+                <tr>
+					<td>Tổng tiền</td>
+                    <td></td>
+                    <td></td>
+                    <td style="text-align: center;">@(Model.ComputeTotalValue() + Model.Lines.Count() * 10000)<span> VND</span></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>

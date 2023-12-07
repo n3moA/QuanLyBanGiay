@@ -1,0 +1,167 @@
+﻿@model List<QuanLyBanGiay_ADMIN.Models_User.SanphamHienthi>
+@using System;
+@using System.Globalization;
+
+@{
+	CultureInfo culture = new CultureInfo("en-US");
+	culture.NumberFormat.NumberGroupSeparator = ".";
+}
+
+<link rel="stylesheet" href="/user/css/Mine.css">
+<link href="~/user/css/site.css" rel="stylesheet" />
+<style>
+	.product {
+		margin: 0px;
+		width: 260px;
+		height: 300px;
+		background: white;
+		border: 1px solid #333;
+		position: relative;
+		z-index: 90;
+	}
+
+	.ribbon-wrapper {
+		width: 85px;
+		height: 88px;
+		overflow: hidden;
+		position: absolute;
+		top: -3px;
+		left: -3px;
+	}
+
+	.ribbon {
+		font: bold 15px sans-serif;
+		color: #333;
+		text-align: center;
+		-webkit-transform: rotate(-45deg);
+		-moz-transform: rotate(-45deg);
+		-ms-transform: rotate(-45deg);
+		-o-transform: rotate(-45deg);
+		position: relative;
+		padding: 7px 0;
+		top: 15px;
+		left: -30px;
+		width: 120px;
+		background-color: #ff6139;
+		color: #fff;
+	}
+</style>
+<!-- start product Area -->
+<section class="owl-carousel active-product-area section_gap">
+	<!-- single product slide -->
+	<div class="single-product-slider">
+		<div class="container">
+			<div class="row justify-content-center">
+				<div class="col-lg-6 text-center">
+					<div class="section-title">
+						<h1>Sản phẩm mới nhất</h1>
+					</div>
+				</div>
+			</div>
+			<div class="row">
+				@foreach (var item in Model)
+				{
+					<div class="col-md-3 col-sm-6">
+						<div class="product-grid2">
+							<div class="product-image2 product">
+								<a href="~/Shop/ShopProductDetail/@item.Masanpham">
+									<img class="pic-1" src="/user/img/product/@item.Anhsp" style="width: 260px;height: 300px;">
+									<img class="pic-2" src="/user/img/product/@item.Anhhover" style="width: 260px;height: 300px;">
+								</a>
+								@if(item.Tilegiamgia != 0)
+								{
+									<div class="ribbon-wrapper">
+										<div class="ribbon">@item.Tilegiamgia<span>% OFF</span></div>
+									</div>
+								}
+								<ul class='social'>
+									<li><a href='ShopProductDetail?id=@item.Masanpham' data-tip='View Details'><i class='fa fa-eye'></i></a></li>
+									<li><a data-toggle='ajax-modal' data-target='#productdetail' data-url='Shop/AddProduct?id=@item.Masanpham' data-tip='Add to cart'><i class='fa fa-shopping-cart'></i></a></li>
+								</ul>
+							</div>
+							<div class="product-content">
+								<h3 class="title"><a href="~/Shop/ShopProductDetail/@item.Masanpham">@item.TenSanpham</a></h3>
+								@if (item.Tilegiamgia != 0)
+								{
+									<span class="price" style="text-decoration: line-through;color: #5739325c;font-size: 13px;">@item.Giagoc<span> VND</span><span></span></span>
+								}
+								@{
+									int giaban1 = (int)((decimal)(1 - (decimal)item.Tilegiamgia / 100) * (decimal)item.Giagoc);
+									string giaban = giaban1.ToString("N0", culture);
+								}
+								<h6 class="l-through" style="color:#21ac26;font-size:16px;">@giaban<span> VND</span></h6>
+							</div>
+						</div>
+					</div>
+				}
+			</div>
+		</div>
+	</div>
+	<!-- single product slide -->
+	<div class="single-product-slider">
+		<div class="container">
+			<div class="row justify-content-center">
+				<div class="col-lg-6 text-center">
+					<div class="section-title">
+						<h1>Sản phẩm sắp ra mắt</h1>
+					</div>
+				</div>
+			</div>
+			<div class="row">
+				@foreach (var item in ViewBag.Sanphamseco)
+				{
+					<!-- single product -->
+					<div class="col-md-3 col-sm-6">
+						<div class="product-grid2">
+							<div class="product-image2 product" style="position:relative;">
+								<a href="~/Shop/ShopProductDetail/@item.Masanpham">
+									<img class="pic-1" src="/user/img/product/@item.Anhsp" style="width: 260px;height: 300px;">
+									<img class="pic-2" src="/user/img/product/@item.Anhhover" style="width: 260px;height: 300px;">
+								</a>
+								@if (item.Tilegiamgia != 0)
+								{
+									<div class="ribbon-wrapper">
+										<div class="ribbon">@item.Tilegiamgia<span>% OFF</span></div>
+									</div>
+								}
+								<ul class='social'>
+									<li><a href='ShopProductDetail?id=@item.Masanpham' data-tip='View Details'><i class='fa fa-eye'></i></a></li>
+									<li><a data-toggle='ajax-modal' data-target='#productdetail' data-url='Shop/AddProduct?id=@item.Masanpham' data-tip='Add to cart'><i class='fa fa-shopping-cart'></i></a></li>
+								</ul>
+							</div>
+							<div class="product-content">
+								<h3 class="title"><a href="~/Shop/ShopProductDetail/@item.Masanpham">@item.TenSanpham</a></h3>
+								@if(item.Tilegiamgia !=0)
+								{
+									<span class="price" style='text-decoration: line-through;color: #5739325c;font-size: 13px;'>@item.Giagoc<span> VND</span><span></span></span>
+								}
+
+								@{
+									int giaban1 = (int)((decimal)(1 - (decimal)item.Tilegiamgia / 100) * (decimal)item.Giagoc);
+									string giaban = giaban1.ToString("N0",culture);
+								}
+								<h6 class="l-through" style="color:#21ac26; font-size:16px;">@giaban<span> VND</span></h6>
+							</div>
+						</div>
+					</div>
+				}
+			</div>
+		</div>
+	</div>
+</section>
+<div id="PlaceHolderHere"></div>
+<!-- end product Area -->
+<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script type="text/javascript">
+	$(document).ready(function () {
+		$("body").on("click", "a[data-toggle='ajax-modal']", function (event) {
+			var placeholder = $('#PlaceHolderHere');
+			var url = $(this).data('url');
+			$.get(url).done(function (data) {
+				placeholder.html(data);
+				placeholder.find('.modal').modal('show');
+			})
+		});
+	});
+</script>

@@ -1,0 +1,150 @@
+﻿@model IEnumerable<QuanLyBanGiay_ADMIN.Models.LichSuMuaHang>
+
+@{
+    ViewData["Title"] = "LichSu";
+    Layout = "~/Views/Shared/_LayoutAdmin.cshtml";
+}
+
+@{
+    string lastMaHoadon = null;
+    decimal totalThanhtien = 0;
+}
+
+@if (ViewBag.ThongTin!=null)
+{
+    <section class="content">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-20 offset">
+                    <div class="callout callout-info">
+                        <h3 style="color:red">LỊCH SỬ MUA HÀNG </h3>
+                        <div class="invoice p-3 mb-3">
+                            <div class="row invoice-info">
+                                <address>
+                                    <strong>Thông tin khách hàng</strong><br>
+                                    Tên khách hàng: @ViewBag.ThongTin.TenNguoidung<br>
+                                    Số điện thoại: @ViewBag.ThongTin.sdt<br>
+                                </address>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <table id="lst" class="table table-bordered text-center">
+                                <thead class="bg-dark text-light">
+
+                                    <tr>
+                                        <th>Mã hóa đơn</th>
+                                        <th>Mã sản phẩm</th>
+                                        <th>Tên sản phẩm</th>
+                                        <th>Ngày đặt hàng</th>
+                                        <th colspan="3">Ảnh sản phẩm</th>
+                                        <th>Size</th>
+                                        <th>Số lượng</th>
+                                        <th>Giá gốc</th>
+                                        <th>Mã giảm giá</th>
+                                        <th>Thành tiền</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var d in Model)
+                                    {
+                                        if (lastMaHoadon != null && lastMaHoadon == d.MaHoadon)
+                                        {
+
+                                            // Đây là các dòng tiếp theo cho cùng một "MaHoadon"
+                                            <tr>
+                                                <td class="text-center"></td> <!-- Không hiển thị MaHoadon lần thứ 2 trở đi -->
+                                                <td>@d.MaSanpham</td>
+                                                <td>@d.Ten_Sanpham</td>
+                                                <td>@string.Format("{0:dd/MM/yyyy}",d.Ngaydathang)</td>
+                                                <td>
+                                                    <img class="product-image" src="~/img/product/@d.Link1" />
+                                                </td>
+                                                <td>
+                                                    <img class="product-image" src="~/img/product/@d.Link2" />
+                                                </td>
+                                                <td>
+                                                    <img class="product-image" src="~/img/product/@d.Link3" />
+                                                </td>
+                                                <td>@d.size</td>
+                                                <td>@d.Soluong</td>
+                                                <td>@string.Format("{0:N0}", d.Giagoc)</td>
+                                                <td>@d.MaGiamgia</td>
+                                                <td>
+                                                    @string.Format("{0:N0}", d.Thanhtien)
+                                                </td>
+                                            </tr>
+
+                                            // Cập nhật tổng thành tiền
+                                            totalThanhtien = (decimal)(totalThanhtien + (decimal?)d.Thanhtien);
+                                        }
+                                        else
+                                        {
+                                            // Đây là dòng đầu tiên cho mỗi "MaHoadon"
+                                            <tr>
+                                                <td>@d.MaHoadon</td>
+                                                <td>@d.MaSanpham</td>
+                                                <td>@d.Ten_Sanpham</td>
+                                                <td>@string.Format("{0:dd/MM/yyyy}",d.Ngaydathang)</td>
+                                                <td>
+                                                    <img class="product-image" src="~/img/product/@d.Link1" />
+                                                </td>
+                                                <td>
+                                                    <img class="product-image" src="~/img/product/@d.Link2" />
+                                                </td>
+                                                <td>
+                                                    <img class="product-image" src="~/img/product/@d.Link3" />
+                                                </td>
+                                                <td>@d.size</td>
+                                                <td>@d.Soluong</td>
+                                                <td>@string.Format("{0:N0}", d.Giagoc)</td>
+                                                <td>@d.MaGiamgia</td>
+                                                <td>
+                                                    @string.Format("{0:N0}", d.Thanhtien)
+                                                </td>
+
+                                            </tr>
+                                            totalThanhtien = (decimal)(totalThanhtien + (decimal?)d.Thanhtien);
+                                            // Cập nhật MaHoadon cuối cùng
+                                            lastMaHoadon = d.MaHoadon;
+                                        }
+                                    }
+
+                                    @if (lastMaHoadon != null)
+                                    {
+                                        <tr>
+                                            <td colspan="11">Tổng tiền đã mua</td>
+                                            <td>@string.Format("{0:N0}", totalThanhtien)</td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            </div>
+    </section>
+}
+else
+{
+    <p class="text-center">TRỐNG</p>
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

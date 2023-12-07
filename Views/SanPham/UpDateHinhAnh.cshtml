@@ -1,0 +1,157 @@
+﻿@model QuanLyBanGiay_ADMIN.Models.AnhSp
+@{
+    ViewData["Title"] = "Pictures";
+    Layout = "~/Views/Shared/_LayoutAdmin.cshtml";
+}
+
+
+<div class="container">
+    <div class="row">
+        <div class="col-8 offset-2">
+            <div class="card">
+                <div class="card-header">
+                    <h2 class="text-info">HÌNH ẢNH SẢN PHẨM</h2>
+                </div>
+                <div class="card-body">
+                    <form method="post" asp-action="UpDateHinhAnh">
+                        <div class="form-group">
+                            <label for="exampleInputEmail1">Mã sản phẩm</label>
+                            <input type="text" class="form-control" asp-for="MaSanpham" readonly>
+                        </div>
+                        <div class="form-group">
+                                <table class="table table-bordered text-center">
+                                <div class="form-group mb-3" >
+                                    <label for="exampleInputEmail1">Chọn ảnh 1</label>
+                                    <input  type="file" id="file" accept="image/*" readonly>
+                                </div>
+                                <div class="form-group mb-3">
+                                    <label for="exampleInputEmail1">Chọn ảnh 2</label>
+                                    <input  type="file" id="file2" accept="image/*" readonly>
+                                </div>
+                                <div class="form-group mb-3">
+                                    <label for="exampleInputEmail1">Chọn ảnh 3</label>
+                                    <input  type="file" id="file3" accept="image/*" readonly>
+                                </div>
+                                    <label for="exampleInputEmail1">Hình ảnh</label>                   
+                                    <thead class="bg-aqua text-light">
+                                        <tr>
+                                            <th>
+                                                <div class="form-group">
+                                                    <label for="exampleInputEmail1" style="color:black">Ảnh 1</label>
+                                                    
+                                                <input type="text" class="form-control" id="link1" asp-for="Link1" readonly >
+                                                </div>
+                                            </th>
+                                            <th>
+                                                <div class="form-group">
+                                                    <label for="exampleInputEmail1" style="color:black">Ảnh 2</label>
+                                                <input type="text" class="form-control" id="link2" asp-for="Link2" readonly>
+                                            </div>
+                                            </th>
+                                            <th>
+                                                <div class="form-group">
+                                                    <label for="exampleInputEmail1" style="color:black">Ảnh 3</label>
+                                                <input type="text" class="form-control" id="link3" asp-for="Link3" readonly>
+                                                </div>
+                                            </th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td>
+                                                <img id="a1" class="product-image" src="~/img/product/@Model.Link1" />
+                                            </td>
+                                            <td>
+                                                <img id="a2" class="product-image" src="~/img/product/@Model.Link2" />
+                                            </td>
+                                            <td>
+                                                <img id="a3" class="product-image" src="~/img/product/@Model.Link3" />
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                        </div>
+                        <button type="submit" class="btn btn-primary">SAVE</button>
+                        </form>
+                        
+                        </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+        const fileInput = document.getElementById('file');
+        var link1 = document.getElementById('link1');
+        var lik1 = document.getElementById('a1');
+        fileInput.addEventListener('change', (event) => {
+            const file = event.target.files[0];
+            if (file) {
+                // Đoạn mã xử lý tệp ảnh ở đây (nếu cần)
+                //console.log('Đã chọn tệp ảnh:',file.name );
+                link1.value = file.name;
+                //link1.innerText = file.name;
+                const reader = new FileReader();
+                reader.onload = function (e) {
+                    // Hiển thị hình ảnh đã chọn lên trên trang
+                    lik1.src = e.target.result;
+                };
+                reader.readAsDataURL(file);
+            }else{
+                link1.value = @Model.Link1;
+                link1.innerText = @Model.Link1;
+                lik1.src='';
+            }
+        });
+
+
+        const fileInput2 = document.getElementById('file2');
+        var link2 = document.getElementById('link2');
+        var lik2 = document.getElementById('a2');
+        fileInput2.addEventListener('change', (event) => {
+            const file = event.target.files[0];
+            if (file) {
+                // Đoạn mã xử lý tệp ảnh ở đây (nếu cần)
+                //console.log('Đã chọn tệp ảnh:',file.name );
+                link2.value = file.name ;
+                const reader = new FileReader();
+                reader.onload = function (e) {
+                    // Hiển thị hình ảnh đã chọn lên trên trang
+                    lik2.src = e.target.result;
+                };
+                reader.readAsDataURL(file);
+
+                //link1.innerText = file.name;
+            } else {
+                link2.value = @Model.Link2;
+                lik2.src = '';
+            }
+        });
+
+        const fileInput3 = document.getElementById('file3');
+        var link3 = document.getElementById('link3');
+        var lik3 = document.getElementById('a3');
+        fileInput3.addEventListener('change', (event) => {
+            const file = event.target.files[0];
+            if (file) {
+                // Đoạn mã xử lý tệp ảnh ở đây (nếu cần)
+                //console.log('Đã chọn tệp ảnh:',file.name );
+                link3.value = file.name;
+                const reader = new FileReader();
+                reader.onload = function (e) {
+                    // Hiển thị hình ảnh đã chọn lên trên trang
+                    lik3.src = e.target.result;
+                };
+                reader.readAsDataURL(file);
+                //link1.innerText = file.name;
+            } else {
+                link3.value = @Model.Link3;
+                lik3.src = '';
+            }
+        });
+    
+</script>
+
+
+
+
+

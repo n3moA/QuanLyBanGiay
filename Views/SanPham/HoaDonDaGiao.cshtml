@@ -1,0 +1,110 @@
+﻿@model X.PagedList.IPagedList<QuanLyBanGiay_ADMIN.Models.HienThiHoaDon>
+
+@using X.PagedList.Mvc.Core
+@using X.PagedList.Web.Common;
+@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Views/Shared/_LayoutAdmin.cshtml";
+    double? count = 0;
+    foreach(var d in Model)
+    {
+        count += d.Thanhtien;
+    }
+}
+
+<style>
+
+    .custom-btn:active {
+        background-color: red; /* Màu nền khi nút được nhấn */
+        border-color: red; /* Màu viền khi nút được nhấn */
+        color: white; /* Màu chữ khi nút được nhấn */
+    }
+
+    #lst tbody tr:hover {
+        background-color: coral;
+    }
+</style>
+<style>
+    .table td, .table th {
+        padding: 0.25rem;
+        width: auto;
+        vertical-align: middle;
+        border-top: 1px solid #dee2e6;
+    }
+</style>
+<div class="container">
+    <div class="row">
+        <div class="col-14 offset">
+            <h1 class="text-info text-center p-1 border border-dark">HÓA ĐƠN ĐÃ GIAO</h1>
+            <h2>Doanh thu: @string.Format("{0:N0}", count) đồng</h2>
+            <table id="lst" class="table table-bordered text-center">
+                <thead class="bg-dark text-light">
+                    <tr>
+                        <th>Mã hóa đơn</th>
+                        <th>Mã khách hàng</th>
+                        <th>Tên khách hàng</th>
+                        <th>Số điện thoại</th>
+                        <th>Địa chỉ giao hàng</th>
+                        <th>Ngày đặt hàng</th>
+                        <th>Phương thức thanh toán</th>
+                        <th>Trạng thái thanh toán</th>
+                        <th>Tổng tiền</th>
+                        <th>Trạng thái hóa đơn</th>
+
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var d in Model)
+                    {
+                        <tr>
+
+                            <td>@d.MaHoadon</td>
+                            <td>@d.MaKhachhang</td>
+                            <td>@d.TenNguoidung</td>
+                            <td>@d.sdt</td>
+                            <td>@d.Diachigiaohang</td>
+                            <td>@string.Format("{0:dd-MM-yyyy}",d.Ngaydathang)</td>
+                            <td>@d.PhuongthucTT</td>
+                            <td style="color:forestgreen"> <i class="far fa-check fa-solid nav-icon" style="color:forestgreen"></i>@d.TrangthaiTT</td>
+                            <td>@string.Format("{0:N0}", d.Thanhtien)</td>
+                            <td style="color:forestgreen"> <i class="far fa-check fa-solid nav-icon" style="color:forestgreen"></i> @d.Trangthaihoadon </td>
+
+                        </tr>
+                      
+                    }
+
+                </tbody>
+            </table>
+
+        </div>
+    </div>
+</div>
+<div class="page-info" style="text-align:center">
+    Trang @(Model.PageNumber) trên @Model.PageCount
+</div>
+<div class="card-tools">
+    <ul class="pagination pagination-sm">
+        @Html.PagedListPager(Model,page=>Url.Action("HoaDonDaGiao","SanPham",new{page = page}), new PagedListRenderOptions{
+        LiElementClasses = new string[] {"page-item"},
+        PageClasses = new string[] {"page-link"},
+        Display = PagedListDisplayMode.IfNeeded,
+        MaximumPageNumbersToDisplay = 3, // Số trang tối đa để hiển thị
+        EllipsesFormat = "&#8230;", // Định dạng dấu ba chấm
+        })
+
+    </ul>
+
+</div>
+<script>
+    function Hoi(event) {
+        var result = confirm("Bạn có chắc chắn hủy hóa đơn này?");
+        if (result == true) {
+
+        }
+        else {
+            event.preventDefault();
+        }
+    }
+    
+
+</script>

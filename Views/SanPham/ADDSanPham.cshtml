@@ -1,0 +1,168 @@
+﻿@model QuanLyBanGiay_ADMIN.Models.ChiTietSanPham
+@{
+    ViewData["Title"] = "ThemSP";
+    Layout = "~/Views/Shared/_LayoutAdmin.cshtml";
+}
+
+
+
+<div class="container">
+    <div class="row">
+        <div class="col-8 offset-2">
+            <div class="card">
+                <div class="card-header">
+                    <h2 class="text-info">THÊM SẢN PHẨM MỚI</h2>
+                </div>
+                @if (ViewBag.Error != null)
+                {
+                    <div class="alert alert-danger" role="alert">
+                        @ViewBag.Error
+                    </div>
+                }
+                <div class="card-body">
+                    <form method="post" asp-action="ADDSanPham">
+                        <table class="table border-0 text-center">
+                            <thead>
+                                <tr>
+                                    <th>
+                                        <div class="form-group">
+                                            <label for="exampleInputEmail1">Hãng sản xuất</label>
+                                            @{
+                                                // Tạo SelectList từ ViewBag.NSX_data
+                                                SelectList manufacturerList = new SelectList(ViewBag.NSX_data, "MaNhasanxuat", "TenNhasanxuat");
+
+                                                // Tạo một SelectListItem để đại diện cho lựa chọn "Nhà sản xuất" làm giá trị mặc định
+                                                SelectListItem defaultManufacturerItem = new SelectListItem
+                                                {
+                                                    Text = "Nhà sản xuất",
+                                                    Value = "", // Giá trị có thể là MaNhasanxuat hoặc có thể là chuỗi trống tùy thuộc vào yêu cầu của bạn
+                                                    Selected = true // Đặt lựa chọn này làm mặc định
+                                                };
+
+                                                // Chuyển đổi SelectList thành một danh sách để thêm lựa chọn mặc định vào đầu danh sách
+                                                List<SelectListItem> selectListItems = manufacturerList.ToList();
+                                                selectListItems.Insert(0, defaultManufacturerItem);
+
+                                                // Tạo SelectList mới từ danh sách các SelectListItem đã được thêm lựa chọn mặc định
+                                                SelectList finalManufacturerList = new SelectList(selectListItems, "Value", "Text");
+
+                                                // Hiển thị dropdown list
+                                                @Html.DropDownList("MaNhasanxuat", finalManufacturerList, new { @class = "form-control" })
+                                            }
+
+
+                                            @*@Html.DropDownList( "MaNhasanxuat", new SelectList( ViewBag.NSX_data,"MaNhasanxuat","TenNhasanxuat"),new { @class = "form-control" } )*@
+                                        </div>
+                                    </th>
+                                    <th>
+                                        <div class="form-group">
+                                            <label for="exampleInputEmail1">Loại giày</label>
+                                            @{
+                                                // Tạo SelectList từ ViewBag.NSX_data
+                                                SelectList manufacturerList1 = new SelectList(ViewBag.LG_data, "MaLoai", "TenLoai");
+
+                                                // Tạo một SelectListItem để đại diện cho lựa chọn "Nhà sản xuất" làm giá trị mặc định
+                                                SelectListItem defaultManufacturerItem1 = new SelectListItem
+                                            {
+                                                Text = "Loại giày",
+                                                Value = "", // Giá trị có thể là MaNhasanxuat hoặc có thể là chuỗi trống tùy thuộc vào yêu cầu của bạn
+                                                Selected = true // Đặt lựa chọn này làm mặc định
+                                            };
+
+                                                // Chuyển đổi SelectList thành một danh sách để thêm lựa chọn mặc định vào đầu danh sách
+                                                List<SelectListItem> selectListItems1 = manufacturerList1.ToList();
+                                                selectListItems1.Insert(0, defaultManufacturerItem1);
+
+                                                // Tạo SelectList mới từ danh sách các SelectListItem đã được thêm lựa chọn mặc định
+                                                SelectList finalManufacturerList1 = new SelectList(selectListItems1, "Value", "Text");
+
+                                                // Hiển thị dropdown list
+                                                @Html.DropDownList("MaLoai", finalManufacturerList1, new { @class = "form-control" })
+                                            }
+
+
+                                            @*@Html.DropDownList( "MaLoai", new SelectList( ViewBag.LG_data,"MaLoai","TenLoai") ,new { @class = "form-control" })*@
+                                        </div>
+                                    </th>
+
+                                </tr>
+                            </thead>
+                        </table>
+                        <div class="form-group">
+                            <label for="exampleInputEmail1">Tên sản phẩm</label>
+                            <input type="text" style="text-transform: capitalize;" placeholder="Hãng sản xuất - Tên - Mã" id="tensanpham" class="form-control" asp-for="Ten_Sanpham">
+                        </div>
+                        <div class="form-group">
+                            <label for="exampleInputEmail1">Màu sắc</label>
+                            <input type="text" id="mausac" class="form-control" asp-for="Mausac">
+                        </div>
+                        <div class="form-group">
+                            <label for="exampleInputEmail1">Mã sản phẩm</label>
+                            <input type="text" class="form-control" id="masanpham" name="Ma_Sanpham" readonly>
+                        </div>
+                        <div class="form-group">
+                            <label for="exampleInputEmail1">Giá gốc</label>
+                            <input type="text" class="form-control" asp-for="Giagoc">
+                        </div>
+                        <br />
+                        <i class="bi bi-chevron-bar-right"></i>
+                        <button type="submit" style="margin-left:580px" class="btn btn-primary">TIẾP</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    var dropdown = document.getElementById("MaNhasanxuat");
+    var input = document.getElementById("masanpham");
+
+    var input_ten = document.getElementById("tensanpham");
+    var input_mausac = document.getElementById("mausac");
+    
+    var selectedValue = "";
+    var them = "";
+    var them1 = "";
+
+    // Lắng nghe sự kiện khi giá trị của dropdown list thay đổi
+    dropdown.addEventListener("change", function () {
+
+        selectedValue = dropdown.value;
+        
+
+        //input_ten.addEventListener("input", function () {
+
+        input.value = selectedValue; 
+    });
+
+    input_ten.addEventListener("change", function () {
+        var gt = input_ten.value;
+
+        var tu = gt.split(' ');
+
+        var chucai1 = tu[1].substring(0, 1).toUpperCase();
+        var chucai2 = tu[2].substring(0, 1).toUpperCase();
+
+
+        // Hiển thị kết quả
+        var ketqua = chucai1 + chucai2;
+        them = selectedValue + " - " + ketqua;
+        input.value = them;
+    });
+
+    input_mausac.addEventListener("change", function () {
+        var gt = input_mausac.value;
+
+        var tu = gt.substring(0, 2);
+
+        them1 = them + " - " + tu;
+        input.value = them1;
+    });
+</script>
+
+
+
+
+
+

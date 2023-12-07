@@ -1,0 +1,93 @@
+﻿@model QuanLyBanGiay_ADMIN.Models.Nguoidung
+
+@{
+    ViewData["Title"] = "SignUp";
+    Layout = "~/Views/Shared/_LayoutUser.cshtml";
+}
+
+<style>
+    .overlay {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgb(214 203 203 / 0%);
+        color: #fff; /* Màu chữ trắng */
+        font-size: 24px;
+    }
+
+</style>
+<script src="~/user/js/login/loginsignup.js"></script>
+<!--================Login Box Area =================-->
+<section class="login_box_area section_gap banner-area organic-breadcrumb">
+
+    <div class="container">
+        <div class="row single-slide align-items-center d-flex">
+            <div class="col-lg-5 col-md-6">
+                <div class="banner-content">
+                    <div class="login_form_inner" style="padding-top:50px;">
+                        <h2>Create an account</h2>
+                        <form class="row login_form" action="~/Login/SignUp" method="post" id="contactForm" novalidate="novalidate">
+                            <div class="col-md-12 form-group">
+                                <input type="text" class="form-control" id="us" name="Username" placeholder="Username" maxlength="30" onfocus="this.placeholder = ''" onblur="this.placeholder = 'Username'" onkeyup="checkuser('us','thongbao')">
+                                <span class="text-danger" asp-validation-for="Username" id="user"></span>
+                            </div>
+                            <div class="col-md-12 form-group">
+                                <input type="password" class="form-control" id="pw" name="Password" placeholder="Password" maxlength="30" onfocus="this.placeholder = ''" onblur="this.placeholder = 'Password'" onkeyup="checkpass('pw','thongbao');" onclick="checkuser('us','thongbao')">
+                                <span class="text-danger" asp-validation-for="Password" id="pass"></span>
+                            </div>
+                            <div class="col-md-12 form-group">
+                                <input style="text-transform: capitalize;" type="text" class="form-control" id="tennd" maxlength="30" asp-for="TenNguoidung" placeholder="Tên người dùng" onfocus="this.placeholder = ''" onblur="this.placeholder = 'Tên người dùng'" onkeyup="checkten('tennd','thongbao');" onclick="checkpass('pw','thongbao')">
+                                <span class="text-danger" asp-validation-for="TenNguoidung" id="tennd_err"></span>
+                            </div>
+                            <div class="col-md-12 form-group" style="margin-bottom: 0px;">
+                                <select asp-for="Gioitinh" id="name" class="form-select form-select-lg mb-3 form-control" style="height: 53.454546px;" onfocus="this.placeholder = ''" onblur="this.placeholder = 'Giới tính'">
+                                    <option selected>Giới tính</option>
+                                    <option value="Nam">Nam</option>
+                                    <option value="Nữ">Nữ</option>
+                                </select>
+                            </div>
+                            <div class="col-md-12 form-group">
+                                <input type="text" class="form-control" id="sdt" asp-for="SodienthoaiNv" maxlength="10" placeholder="Số điện thoại" onfocus="this.placeholder = ''" onblur="this.placeholder = 'Số điện thoại'" onkeyup="checksdt('sdt','thongbao');" onclick="checkgioitinh('name','thongbao')">
+                                <span class="text-danger" asp-validation-for="SodienthoaiNv" id="sdt_err"></span>
+                            </div>
+                            <div class="col-md-12 form-group">
+                                <input type="text" class="form-control" id="dc" asp-for="DiachiNv" placeholder="Địa chỉ" maxlength="250" onfocus="this.placeholder = ''" onblur="this.placeholder = 'Địa chỉ'" onkeyup="checkdiachi('dc','thongbao');" onclick="checksdt('sdt','thongbao');">
+                                <span class="text-danger" asp-validation-for="DiachiNv" id="dc_err"></span>
+                            </div>
+                            <div class="col-md-12 form-group">
+                                <input type="text" class="form-control" id="name" asp-for="MaChucvu" value="2" onfocus="this.placeholder = ''" hidden>
+                            </div>
+                            <div class="col-md-12 form-group">
+                                <button onclick="validateForm()" type="button" class="primary-btn">CREATE A NEW ACCOUNT</button>
+                            </div>
+                        </form>
+                        <a href="~/Login/Index"><u style="color: white">Back to Login</u></a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-7" style="height:600px;position: relative;">
+                <img class="img-fluid" src="/user/img/banner/banner-img.png" style="margin-top:100px;" alt="">
+                <div class="overlay">
+                    <div class="banner-content">
+                        <div style="padding-top:95px;padding-bottom: 92px;">
+                            <div class="row login_form" id="contactForm" novalidate="novalidate" style="margin-left:0px;">
+                                <div id="divthongbao" class="col-md-12" style="padding-left:0px;margin-bottom:16px;" hidden>
+                                    <div>
+                                        <img src="~/user/img/user/left.png" style="height:54px;" />
+                                    </div>
+                                    <div id="thongbao" type="password" class="form-control" style="width:auto;height:54px;position:absolute;left: 70px;top: 0;padding-top:15px;background-color: #0e0e0e82;color:white;"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+
+
+

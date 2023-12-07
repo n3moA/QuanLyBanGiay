@@ -1,0 +1,271 @@
+﻿@model X.PagedList.IPagedList<QuanLyBanGiay_ADMIN.Models.HienThiYeuCau>
+
+@using X.PagedList.Mvc.Core
+@using X.PagedList.Web.Common;
+@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Views/Shared/_LayoutAdmin.cshtml";
+
+}
+
+<style>
+
+    .custom-btn:active {
+        background-color: red; /* Màu nền khi nút được nhấn */
+        border-color: red; /* Màu viền khi nút được nhấn */
+        color: white; /* Màu chữ khi nút được nhấn */
+    }
+
+    #lst tbody tr:hover {
+        background-color: coral;
+    }
+</style>
+<style>
+    .table td, .table th {
+        padding: 0.25rem;
+        width: auto;
+        vertical-align: middle;
+        border-top: 1px solid #dee2e6;
+    }
+</style>
+<div class="container">
+    <div class="row">
+        <div class="col-12 offset">
+            <h1 class="text-info text-center p-1 border border-dark">YÊU CẦU</h1>
+            <table id="lst" class="table table-bordered text-center">
+                <thead class="bg-dark text-light">
+                    <tr>
+                        
+                        <th>Mã khách hàng</th>
+                        <th>Tên khách hàng</th>
+                        <th>Yêu cầu</th>
+                        <th>Mã hóa đơn</th>
+                        <th>Lý do</th>
+                        <th>Thời gian</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    @foreach (var d in Model)
+                    {
+                        <tr data-manguoidung="@d.Ma_Nguoidung" data-tennguoidung="@d.Ten_Nguoidung" data-mahoadon="@d.Ma_Hoadon" data-lydo="@d.LyDo" data-yeucau="@d.Thong_Bao" data-trangthaiyc="@d.TrangThaiYeuCau">
+                            
+                            
+                            <td>@d.Ma_Nguoidung</td>
+                            <td>@d.Ten_Nguoidung</td>
+                            @if (d.TrangThaiYeuCau == 0)
+                            {
+                                <td style="color:red">@d.Thong_Bao</td>
+                                <td><a asp-action="ChiTietHoaDon_ChuaXuLy" asp-controller="SanPham" asp-route-MaHoadon="@d.Ma_Hoadon">@d.Ma_Hoadon</a></td>
+                            }
+                            @if (d.TrangThaiYeuCau == 1)
+                            {
+                                <td style="color:green">@d.Thong_Bao</td>
+                                <td><a asp-action="ChiTietHoaDon_DaXuLy" asp-controller="SanPham" asp-route-MaHoadon="@d.Ma_Hoadon">@d.Ma_Hoadon</a></td>
+                            }
+
+                            <td>@d.LyDo</td>
+                            <td>@d.ThoiGian</td>
+                            <td>
+                                @if(d.TrangThaiYeuCau == 0)
+                                {
+                                    <a onclick="clickSave(event)" type="submit" class="btn btn-primary" style="background-color:red">Hủy đơn hàng</a>
+                                }
+                                @if(d.TrangThaiYeuCau == 1)
+                                {
+                                    <a onclick="clickSave(event)" type="submit" class="btn btn-primary" style="background-color:green">Xác nhận</a>
+                                }
+                            </td>
+                        </tr>
+                    }
+
+                </tbody>
+            </table>
+
+        </div>
+    </div>
+</div>
+<div class="page-info" style="text-align:center">
+    Trang @(Model.PageNumber) trên @Model.PageCount
+</div>
+<div class="card-tools">
+    <ul class="pagination pagination-sm">
+        @Html.PagedListPager(Model,page=>Url.Action("ThongBao","SanPham",new{page = page}), new PagedListRenderOptions{
+        LiElementClasses = new string[] {"page-item"},
+        PageClasses = new string[] {"page-link"},
+        Display = PagedListDisplayMode.IfNeeded,
+        MaximumPageNumbersToDisplay = 3, // Số trang tối đa để hiển thị
+        EllipsesFormat = "&#8230;", // Định dạng dấu ba chấm
+        })
+
+    </ul>
+
+</div>
+
+<style>
+    .overlay {
+        display: none;
+        position: fixed;
+        top: 0;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        background-color: rgba(0, 0, 0, 0.5);
+        z-index: 999;
+    }
+
+    .error-message {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        padding: 20px;
+        background-color: #fff;
+        border: 1px solid #ff0000;
+        border-radius: 5px;
+        z-index: 1000;
+    }
+
+    .close-button {
+        padding: 5px 10px;
+        background-color: #ff0000;
+        color: #fff;
+        border: none;
+        border-radius: 3px;
+        cursor: pointer;
+        margin-top: 10px;
+    }
+
+    .close-button:hover {
+        background-color: #cc0000;
+    }
+
+</style>
+
+<div id="overlay" class="overlay">
+    <div id="error-message" class="error-message">
+        <div class="container">
+            <div class="row">
+
+                    <div class="card">
+                        <div class="card-body">
+                            
+                                <div class="form-group">
+                                    <label for="exampleInputEmail1">Mã khách hàng </label>
+                                    <input type="text" class="form-control" id="makh" name="MaKhachhang" readonly>
+                                </div>
+                                <div class="form-group">
+                                    <label for="exampleInputEmail1">Tên khách hàng</label>
+                                    <input type="text" class="form-control" id="ten" name="Ten_Nguoidung" readonly>
+                                </div>
+                                <div class="form-group">
+                                    <label for="exampleInputEmail1">Yêu cầu </label>
+                                    <input type="text" class="form-control" id="yc" name="YeuCau" readonly>
+                                </div>
+                                <div class="form-group">
+                                    <label for="exampleInputEmail1">Mã hóa đơn </label>
+                                    <input type="text" class="form-control" id="mahd" name="MaHoadon" readonly>
+                                </div>
+                            <div id="LYDO" class="form-group" style="display: none">
+                                <label for="exampleInputEmail1">Lý do </label>
+                                <input type="text" class="form-control" id="ld" name="LyDo" readonly>
+                            </div>
+
+                        </div>
+                    </div>
+      
+            </div>
+        </div>
+        <a  style="display: none" id="xn" type="submit" class="btn btn-success">Xác nhận giao hàng thành công</a>
+        <a style="display: none" id="huy" type="submit" class="btn btn-danger">Hủy đơn hàng này</a>
+        <button id="closeButton" class="close-button" style="margin-left:200px">Đóng</button>
+    </div>
+
+</div>
+
+<script>
+    var mand = document.getElementById('makh');
+    var tennd = document.getElementById('ten');
+    var ycau = document.getElementById('yc');
+    var mahd = document.getElementById('mahd');
+    var ld = document.getElementById('ld');
+
+    const overlay = document.getElementById('overlay');
+    const LYDO = document.getElementById('LYDO');
+    const xn = document.getElementById('xn');
+    const huy = document.getElementById('huy');
+    const closeButton = document.getElementById('closeButton');
+
+
+    closeButton.addEventListener('click', function () {
+        overlay.style.display = 'none';
+    });
+    
+
+    function clickSave(event) {
+
+        
+        const row = event.target.closest('tr'); // Get the closest row to the clicked button
+        const maNguoiDung = row.dataset.manguoidung;
+        const tenNguoiDung = row.dataset.tennguoidung;
+        const maHoaDon = row.dataset.mahoadon;
+        const lyDo = row.dataset.lydo;
+        const yeuCau = row.dataset.yeucau;
+        const trangthaiYC=row.dataset.trangthaiyc;
+        // Display the data in the overlay
+        //const errorMessage = document.querySelector('#error-message span');
+        //errorMessage.textContent = `Thông tin hàng đang chọn: Mã Người dùng: ${maNguoiDung}, Tên Người dùng: ${tenNguoiDung}, Yêu cầu: ${yeuCau}, Mã Hóa đơn: ${maHoaDon}, Lý do: ${lyDo}`;
+        mand.value=maNguoiDung;
+        mand.innerHTML = mand.value;
+
+        tennd.value = tenNguoiDung;
+        tennd.innerHTML = tennd.value;
+
+        ycau.value=yeuCau;
+        ycau.innerHTML = ycau.value;
+
+        mahd.value=maHoaDon;
+        mahd.innerHTML = mahd.value;
+
+        ld.value=lyDo;
+        ld.innerHTML = ld.value;
+
+        if(trangthaiYC == 1){
+            overlay.style.display = 'block';
+            LYDO.style.display = 'none';
+            xn.style.display = 'block';
+            huy.style.display = 'none';
+            xn.addEventListener('click', function (event) {
+                const url = `/SanPham/XacNhanGiaoHang?MaHoadon=${mahd.value}&MaKhachhang=${mand.value}`;
+                window.location.href = url;
+            });
+        }
+        else if(trangthaiYC == 0){
+            LYDO.style.display = 'block';
+            overlay.style.display = 'block';
+            huy.style.display = 'block';
+            xn.style.display = 'none';
+            // Xử lý sự kiện click cho nút <a> có id là "huy"
+            huy.addEventListener('click', function (event) {
+                const url = `/SanPham/HuyHoaDon?Ma_Hoadon=${mahd.value}&MaNguoidung=${mand.value}`;
+                window.location.href = url;
+            });
+        }
+
+    }
+
+    
+
+    function Hoi(event) {
+        var result = confirm("Bạn có chắc chắn hủy đơn hàng này?");
+        if (result == true) {
+
+        }
+        else {
+            event.preventDefault();
+        }
+    }
+
+
+</script>

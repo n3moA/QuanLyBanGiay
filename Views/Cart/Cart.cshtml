@@ -1,0 +1,218 @@
+﻿
+@{
+    ViewData["Title"] = "Cart";
+    Layout = "~/Views/Shared/_LayoutUser.cshtml";
+}
+
+@model QuanLyBanGiay_ADMIN.Models_User.Cart;
+
+<script src='https://kit.fontawesome.com/a076d05399.js' crossorigin='anonymous'></script>
+
+<!-- Start Banner Area -->
+<section class="banner-area organic-breadcrumb" style="height: 330px;">
+    <div class="container">
+        <div class="breadcrumb-banner d-flex flex-wrap align-items-center justify-content-end" style="padding-top:60px;">
+            <div class="col-first">
+                <h1>Shopping Cart</h1>
+                <nav class="d-flex align-items-center">
+                    <a href="~/Home">Home<span class="lnr lnr-arrow-right"></span></a>
+                    <a href="#">Cart</a>
+                </nav>
+            </div>
+        </div>
+    </div>
+</section>
+<!-- End Banner Area -->
+<!--================Cart Area =================-->
+<section class="cart_area">
+    <div class="container">
+        <div class="cart_inner">
+            <div class="table-responsive">
+                <table class="table table-bordered table-hover" style="text-align:center; border:2px;">
+                    <thead>
+                        <tr class="thead-dark">
+                            <th scope="col" style="color:white">Product</th>
+                            <th scope="col" style="color:white">Size</th>
+                            <th scope="col" style="color:white">Raw Price</th>
+                            <th scope="col" style="color:white">Real Price</th>
+                            <th scope="col" style="color:white">Quantity</th>
+                            <th scope="col" style="color:white">Total</th>
+                            <th scope="col" style="color:white">Remove</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model?.Lines)
+                        {
+                            string spid = item.Product.Masanpham + item.Product.size.ToString() + "sp";
+                            string priceid = item.Product.Masanpham + item.Product.size.ToString() + item.Product.Giagoc.ToString();
+                            string numid = item.Product.Masanpham + item.Product.size.ToString() + item.Quantity.ToString();
+                            string sizeid = item.Product.Masanpham + item.Product.size.ToString() + item.Product.size.ToString();
+                            string totalid = item.Product.Masanpham + item.Product.size.ToString();
+                            <tr>
+                                <td style="padding-top:5px;padding-bottom:5px;">
+                                    <a href="~/Shop/ShopProductDetail/@item.Product.Masanpham">
+                                        <div class="media">
+                                            <div class="d-flex">
+                                                <img src="/user/img/product/@item.Product.Anhsp" alt="" style="width:101px">
+                                            </div>
+                                            <div class="media-body" style="color:black">
+                                                <p>@item.Product.TenSanpham</p>
+                                            </div>
+                                        </div>
+                                    </a>
+                                </td>
+                                <td>
+                                    <h5>@item.Product.size</h5>
+                                </td>
+                                <td>
+                                    <h5>@item.Product.Giagoc</h5>
+                                </td>
+                                <td>
+                                    <h5 id="@priceid">@(((decimal)1 - (decimal)item.Product.Tilegiamgia / 100) * (decimal)item.Product.Giagoc)</h5>
+                                </td>
+                                <td>
+                                    <div class="product_count">
+                                        <input type="hidden" value="@item.Product.Masanpham" id="@spid" />
+                                        <input type="hidden" value="@item.Product.size" id="@sizeid" />
+                                        <input onchange="updateCartAjax('@spid','@sizeid','@numid')" onkeyup="onkeyupInput('@numid','@priceid','@totalid')" type="text" name="qty" id="@numid" maxlength="4" value="@item.Quantity" title="Quantity:" class="input-text qty" oninput="this.value = this.value.replace(/[^0-9]/g, '')">
+                                        <button onclick="incrementQuantity('@numid','@priceid','@totalid');updateCartAjax('@spid','@sizeid','@numid')" class="increase items-count" type="button">
+                                            <i class="lnr lnr-chevron-up"></i>
+                                        </button>
+                                        <button onclick="decrementQuantity('@numid','@priceid','@totalid');updateCartAjax('@spid','@sizeid','@numid')" class="reduced items-count" type="button">
+                                            <i class="lnr lnr-chevron-down"></i>
+                                        </button>
+                                    </div>
+                                </td>
+
+                                <td>
+                                    <h5 id="@totalid">@((((decimal)1 - (decimal)item.Product.Tilegiamgia / 100) * (decimal)item.Product.Giagoc) * (decimal)item.Quantity)</h5>
+                                </td>
+                                <td>
+                                    <a href="~/Cart/RemoveFromCart/?productID=@item.Product.Masanpham&size=@item.Product.size" class='fas fa-trash-alt' style='color:red'>Remove</a>
+                                </td>
+                            </tr>
+                        }
+                        <!---------------------------------------------------------------------------------------------------------------------------------->
+                        <tr class="out_button_area">
+                            <td colspan="7">
+                                <div class="checkout_btn_inner d-flex align-items-center" style="width: 700px;margin-left:250px;">
+                                    <a class="gray_btn" href="~/Shop/Index">Continue Shopping</a>
+                                    @if (ViewBag.user is not null)
+                                    {
+                                        <a style="width:200px;" class="primary-btn" onclick="checkCheckout(@Model.Lines.Count())">Mua hàng</a>
+                                    }
+                                    else
+                                    {
+                                        <a class="primary-btn" href="~/Login" onclick="statebefore()">Member Checkout</a>
+                                        <a class="primary-btn" onclick="checkCheckout(@Model.Lines.Count())">Guest Checkout</a>
+                                        <script>
+                                            function statebefore() {
+                                                var currentURL = "/Checkout";
+                                                $.ajax({
+                                                    url: "/Login/SetURL",
+                                                    type: "GET",
+                                                    data: {
+                                                        url: currentURL
+                                                    }
+                                                });
+                                            }
+                                        </script>
+                                    }
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</section>
+<!--================End Cart Area =================-->
+<script>
+    function incrementQuantity(sst, ne, to) {
+        var stt = document.getElementById(sst);
+        var sstvalue = stt.value;
+        var price = document.getElementById(ne);
+        var pricevalue = price.textContent;
+        var sum = document.getElementById(to);
+        var sumvalue = sum.textContent;
+        var total = document.getElementById('subtotal');
+        var totalvalue = total.textContent;
+        if (!isNaN(sstvalue)) {
+            stt.value = parseInt(sstvalue) + 1;
+            document.getElementById(to).textContent = parseInt(sumvalue) + parseInt(pricevalue);
+            total = document.getElementById('subtotal').textContent = parseInt(totalvalue) + parseInt(pricevalue);
+        }
+    }
+
+    function decrementQuantity(sst, ne, to) {
+        var stt = document.getElementById(sst);
+        var sstvalue = stt.value;
+        var price = document.getElementById(ne);
+        var pricevalue = price.textContent;
+        var sum = document.getElementById(to);
+        var sumvalue = sum.textContent;
+        var total = document.getElementById('subtotal');
+        var totalvalue = total.textContent;
+        if (!isNaN(sstvalue) && sstvalue > 0) {
+            stt.value = parseInt(sstvalue) - 1;
+            document.getElementById(to).textContent = parseInt(sumvalue) - parseInt(pricevalue);
+            total = document.getElementById('subtotal').textContent = parseInt(totalvalue) - parseInt(pricevalue);
+        }
+    }
+
+    function onkeyupInput(sst, ne, to) {
+        var stt = document.getElementById(sst);
+        var sstvalue = stt.value;
+        var price = document.getElementById(ne);
+        var pricevalue = price.textContent;
+        var sum = document.getElementById(to);
+        var sumvalue = sum.textContent;
+        var total = document.getElementById('subtotal');
+        var totalvalue = total.textContent;
+        if (!isNaN(parseInt(sstvalue))) {
+            document.getElementById(to).textContent = parseInt(sstvalue) * parseInt(pricevalue);
+        }
+        else {
+            document.getElementById(to).textContent = 0;
+        }
+    }
+
+    // Ajax update cart
+    function updateCartAjax(masp, siz, quan) {
+        var ma = document.getElementById(masp);
+        var productID = ma.value;
+        var si = document.getElementById(siz);
+        var size = si.value;
+        var sl = document.getElementById(quan);
+        var quantity = sl.value;
+        if (quantity == 0) {
+            window.location = "RemoveFromCart?productID=" + productID + "&size=" + size;
+        }
+        $.ajax({
+            url: '/Cart/UpdateCart',
+            type: 'POST',
+            data: { productID: productID, quantity: quantity, size: size },
+            success: function (data) {
+                document.getElementById("Cart_CurentNumber").innerHTML = '(' + data.totalItems + ')';
+                document.getElementById("subtotal").innerHTML = data.totalMoney;
+                var link = '/Cart/UpdateCart?productID=' + productID + '&quantity=' + quantity + '&size=' + size;
+                history.pushState(null, null, link);
+            },
+            error: function () {
+                console.log("Failed to add new item");
+            }
+        });
+    }
+
+    function checkCheckout(countCart) {
+        if (parseInt(countCart) == 0) {
+            alert("Bạn chưa có sản phẩm trong giỏ hàng! Đi mua ngay !");
+            window.location = "/Shop/Index";
+        }
+        else {
+            window.location = "/Checkout";
+        }
+    }
+</script>
+

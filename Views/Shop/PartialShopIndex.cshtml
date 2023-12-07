@@ -1,0 +1,68 @@
+﻿@using X.PagedList.Mvc.Core;
+@using X.PagedList.Web;
+@using System;
+@using System.Globalization;
+
+
+@model X.PagedList.IPagedList<QuanLyBanGiay_ADMIN.Models_User.SanphamHienthi>
+
+@{
+	CultureInfo culture = new CultureInfo("en-US");
+	culture.NumberFormat.NumberGroupSeparator = ".";
+	var pageCurrent = ViewBag.currentpage;
+	var numSize = ViewBag.numpage;
+	var pagePrevious = (pageCurrent > 1) ? pageCurrent - 1 : 1;
+	var pageNext = (pageCurrent < numSize) ? pageCurrent + 1 : numSize;
+}
+
+<section class="lattest-product-area pb-40 category-list">
+	<div class="row" id="pageproduct">
+		@if (numSize != 0)
+		{
+			@foreach (var value in Model)
+			{
+				<div class='col-md-3 col-sm-6' style='margin-bottom: 20px;margin-top: 10px;'>
+					<div class='product-grid2'>
+						<div class='product-image2 product'>
+							<a href='ShopProductDetail?id=@value.Masanpham'>
+								<img class='pic-1' src='/user/img/product/@value.Anhsp' style='height:300px;width:260px;' />
+								<img class='pic-2' src='/user/img/product/@value.Anhhover' style='height:300px;width:260px;' />
+							</a>
+							@if (value.Tilegiamgia > 0)
+							{
+								<div class="ribbon-wrapper">
+									<div class="ribbon">
+										@value.Tilegiamgia
+										<span>% OFF</span>
+									</div>
+								</div>
+							}
+							<ul class='social'>
+								<li><a href='ShopProductDetail?id=@value.Masanpham' data-tip='View Details'><i class='fa fa-eye'></i></a></li>
+								<li><a data-toggle='ajax-modal' data-target='#productdetail' data-url='AddProduct?id=@value.Masanpham' data-tip='Add to cart'><i class='fa fa-shopping-cart'></i></a></li>
+							</ul>
+						</div>
+						<div class='product-content'>
+							<h3 class='title'><a href='ShopProductDetail?id=@value.Masanpham'>@value.TenSanpham</a></h3>
+							@if (value.Tilegiamgia > 0)
+							{
+								<span class="price" style="text-decoration: line-through;color: #5739325c;font-size: 13px;">@value.Giagoc<span> VND</span><span></span></span>
+							}
+							@{
+								int giaban1 = (int)((decimal)(1 - (decimal)value.Tilegiamgia / 100) * (decimal)value.Giagoc);
+								string giaban = giaban1.ToString("N0", culture);
+							}
+							<h6 class="l-through" style="color:#21ac26;font-size:16px;">@giaban<span> VND</span></h6>
+						</div>
+					</div>
+				</div>
+			}
+		}
+		else
+		{
+			<div class="container" style="text-align:center;margin-top:0px;">
+				<img src="~/user/img/category/no-products.jpg" style="width:500px;" />
+			</div>
+		}
+	</div>
+</section>

@@ -1,0 +1,147 @@
+﻿@model QuanLyBanGiay_ADMIN.Models.Nguoidung
+
+@{
+    ViewData["Title"] = "DangKy";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<!--================Login Box Area =================-->
+<section class="login_box_area section_gap banner-area organic-breadcrumb" >
+
+    <div class="container">
+        <div class="row single-slide align-items-center d-flex">
+            <div class="col-lg-5 col-md-6">
+                <div class="banner-content">
+                    <div class="login_form_inner">
+                        <h2>Create an account</h2>
+                        <form class="row login_form" action="~/Admin/DangKy" method="post" id="contactForm" novalidate="novalidate">
+                            <div class="col-md-12 form-group">
+                                <input type="text" class="form-control" id="us" name="Username" placeholder="Username" onfocus="this.placeholder = ''" onblur="this.placeholder = 'Username'" onkeyup="checkuser()">
+                                <span class="text-danger" asp-validation-for="Username" id="user"></span>
+                            </div>
+                            <div class="col-md-12 form-group">
+                                <input type="text" class="form-control" id="pw" name="Password" placeholder="Password" onfocus="this.placeholder = ''" onblur="this.placeholder = 'Password'" onkeyup="checkpass()">
+                                <span class="text-danger" asp-validation-for="Password" id="pass"></span>
+                            </div>
+                            <div class="col-md-12 form-group">
+                                <input style="text-transform: capitalize;" type="text" class="form-control" id="tennd" asp-for="TenNguoidung" placeholder="Tên người dùng" onfocus="this.placeholder = ''" onblur="this.placeholder = 'Tên người dùng'" onkeyup="checkten()">
+                                <span class="text-danger" asp-validation-for="TenNguoidung" id="tennd_err"></span>
+                            </div>
+                            <div class="col-md-12 form-group">
+                                <select asp-for="Gioitinh" id="name" class="form-select form-select-lg mb-3 form-control" onfocus="this.placeholder = ''" onblur="this.placeholder = 'Giới tính'">
+                                    <option selected>Giới tính</option>
+                                    <option value="Nam">Nam</option>
+                                    <option value="Nữ">Nữ</option>
+                                </select>
+                            </div>
+                            <div class="col-md-12 form-group">
+                                <input type="number" class="form-control" id="sdt" asp-for="SodienthoaiNv" placeholder="Số điện thoại" onfocus="this.placeholder = ''" onblur="this.placeholder = 'Số điện thoại'" onkeyup="checksdt()">
+                                <span class="text-danger" asp-validation-for="SodienthoaiNv" id="sdt_err" ></span>
+                            </div>
+                            <div class="col-md-12 form-group">
+                                <input type="text" class="form-control" id="dc" asp-for="DiachiNv" placeholder="Địa chỉ" onfocus="this.placeholder = ''" onblur="this.placeholder = 'Địa chỉ'" onkeyup="checkdiachi()">
+                                <span class="text-danger" asp-validation-for="DiachiNv" id="dc_err"></span>
+                            </div>
+                            @*<div class="col-md-12 form-group">
+                                <select asp-for="MaChucvu" id="name" class="form-select form-select-lg mb-3 form-control" onfocus="this.placeholder = ''" onblur="this.placeholder = 'Mã chức vụ'">
+                                    <option selected>Chức vụ</option>
+                                    <option value="1">Nhân viên</option>
+                                    <option value="2">Khách hàng</option>
+                                </select>
+                            </div>*@
+                            <div class="col-md-12 form-group">
+                                <input type="text" class="form-control" id="name" asp-for="MaChucvu" value="2" onfocus="this.placeholder = ''" hidden>
+                            </div>
+                            <div class="col-md-12 form-group">
+                                <button onclick="ThongBao()" type="submit" value="submit" class="primary-btn" >CREATE A NEW ACCOUNT</button>
+                                
+                            </div>
+                        </form>
+                        <a href="~/Login/Index"><u style="color: white">Back to Login</u></a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-7">
+                <div class="banner-img">
+                    <img class="img-fluid" src="~/login/img/banner/banner-img.png" alt="">
+                </div>
+            </div>
+        </div>
+
+    </div>
+</section>
+
+<script>
+    function ThongBao(){
+        var us = document.getElementById("us").value;
+        var pw = document.getElementById("pw").value;
+        var tennd = document.getElementById("tennd");
+        var sdt = document.getElementById("sdt");
+        var dc = document.getElementById("dc").value;
+        if (us == "" || pw == "" || tennd.value == "" || sdt == "" || dc == "" || /\d/.test(tennd.value) == true || /(84|0[3|5|7|8|9])+([0-9]{8})\b/.test(sdt.value) == false) {
+            tennd.value = "";
+            tennd.innerText = tennd.value;
+            
+            sdt.value = "";
+            sdt.innerText = sdt.value;
+        } 
+        else{
+            window.alert("Người dùng "+tennd.value + " đang được tạo ...");
+        }
+    }
+
+    function checkuser(){
+        var us = document.getElementById("us");
+        var us_span = document.getElementById("user");
+        us_span.innerHTML  = "";
+    }
+    function checkpass(){
+        var pw = document.getElementById("pw");
+        var ps_span = document.getElementById("pass");
+        ps_span.innerHTML = "";
+    }
+    function checkten(){
+        var tennd = document.getElementById("tennd");
+        var tennd_err = document.getElementById("tennd_err");
+        tennd_err.innerHTML = "";
+        if (/\d/.test(tennd.value) == true){
+            tennd_err.innerHTML = "Sai định dạng";
+        }else{
+            tennd_err.innerHTML = "";
+        }
+    }
+    function checksdt(){
+        var sdt = document.getElementById("sdt");
+        var sdt_err = document.getElementById("sdt_err");
+        sdt_err.innerHTML = "";
+        if (/(84|0[3|5|7|8|9])+([0-9]{8})\b/.test(sdt.value) == false){
+            sdt_err.innerHTML = "Số điện thoại không hợp lệ";
+        }else{
+            sdt_err.innerHTML = "";
+        }
+    }
+    function checkdiachi(){
+        var dc = document.getElementById("dc");
+        var dc_err = document.getElementById("dc_err");
+       dc_err.innerHTML = "";
+    }
+
+   
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

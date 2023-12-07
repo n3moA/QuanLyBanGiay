@@ -1,0 +1,158 @@
+﻿@model List<QuanLyBanGiay_ADMIN.Models_User.SanphamDetail>
+@{
+    var danhsachdanhgia = ViewBag.Danhgiasp;
+    var sum = 0.0; var index = 0.0; var sosaotb = 0.0;
+    int[] loaisao = new int[5];
+    Array.Clear(loaisao, 0, loaisao.Length);
+    //Tính số sao đánh giá tb, số lượng người nhận xét theo từng loại sao
+    foreach (var dg in danhsachdanhgia)
+    {
+        sum += dg.Sao;
+        index += 1;
+        loaisao[dg.Sao - 1]++;
+    }
+    if (index != 0.0)
+    {
+        sosaotb = (double)(sum / index);
+    }
+    // Tính số lượng sản phẩm để hiển thị còn hay không
+    var soluongsp = Model.Sum(e => e.sanPhamSizes.Sum(sps => sps.SoLuong));
+}
+<div class="card-header" role="tab" id="headingTwo" style="background-color:pink">
+    <h6 class="mb-0">
+        <a class="collapsed" data-toggle="collapse" href="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">Đánh giá</a>
+    </h6>
+</div>
+<div class="collapse show" role="tabpanel" aria-labelledby="headingTwo" data-parent="#accordion">
+    <div style="border-radius: 0.25rem;margin:20px;padding:30px;width:350px;border:2px;background-color:#caff99">
+        <div class="single_product_ratings mb-15">
+            <h2>@Math.Round(sosaotb, 1)/5</h2>
+            @if (sosaotb == 0)
+            {
+                for (var i = 0; i < 5; i++)
+                {
+                    <i class="fa fa-star-o" aria-hidden="true" style="font-size: 25px"></i>
+                }
+                <p style="color:red">Sản phẩm chưa được xếp hạng</p>
+            }
+            else
+            {
+                for (var i = 0; i < 5; i++)
+                {
+                    if (i < sosaotb)
+                    {
+                        <i class="fa fa-star" aria-hidden="true" style="font-size: 25px"></i>
+                    }
+                    else
+                    {
+                        <i class="fa fa-star-o" aria-hidden="true" style="font-size: 25px"></i>
+                    }
+                }
+            }
+            <span>(@index phản hồi)</span>
+        </div>
+        <div>
+            <div class="single_product_ratings mb-15" style="margin-bottom:10px;display:flex">
+                <i class="fa fa-star" aria-hidden="true" style="margin-right:5px"></i>
+                <i class="fa fa-star" aria-hidden="true" style="margin-right:5px"></i>
+                <i class="fa fa-star" aria-hidden="true" style="margin-right:5px"></i>
+                <i class="fa fa-star" aria-hidden="true" style="margin-right:5px"></i>
+                <i class="fa fa-star" aria-hidden="true" style="margin-right:5px"></i>
+                @{
+                    var wide5 = loaisao[4] * 5;
+                }
+                <div style="margin-left:15px;height:17px;width:200px;background-color:#f4f1e8;border-radius: 0.25rem;">
+                    <div style="position:absolute;height:17px;width:@(wide5)px;background-color:#f9b900;border-radius: 0.25rem;"></div>
+                </div>
+            </div>
+            <div class="single_product_ratings mb-15" style="margin-bottom:10px;display:flex">
+                <i class="fa fa-star" aria-hidden="true" style="margin-right:5px"></i>
+                <i class="fa fa-star" aria-hidden="true" style="margin-right:5px"></i>
+                <i class="fa fa-star" aria-hidden="true" style="margin-right:5px"></i>
+                <i class="fa fa-star" aria-hidden="true" style="margin-right:5px"></i>
+                <i class="fa fa-star-o" aria-hidden="true" style="margin-right:5px"></i>
+                @{
+                    var wide4 = loaisao[3] * 5;
+                }
+                <div style="margin-left:15px;height:17px;width:200px;background-color:#f4f1e8;border-radius: 0.25rem;">
+                    <div style="position:absolute;height:17px;width:@(wide4)px;background-color:#f9b900;border-radius: 0.25rem;"></div>
+                </div>
+            </div>
+            <div class="single_product_ratings mb-15" style="margin-bottom:10px;display:flex">
+                <i class="fa fa-star" aria-hidden="true" style="margin-right:5px"></i>
+                <i class="fa fa-star" aria-hidden="true" style="margin-right:5px"></i>
+                <i class="fa fa-star" aria-hidden="true" style="margin-right:5px"></i>
+                <i class="fa fa-star-o" aria-hidden="true" style="margin-right:5px"></i>
+                <i class="fa fa-star-o" aria-hidden="true" style="margin-right:5px"></i>
+                @{
+                    var wide3 = loaisao[2] * 5;
+                }
+                <div style="margin-left:15px;height:17px;width:200px;background-color:#f4f1e8;border-radius: 0.25rem;">
+                    <div style="position:absolute;height:17px;width:@(wide3)px;background-color:#f9b900;border-radius: 0.25rem;"></div>
+                </div>
+            </div>
+            <div class="single_product_ratings mb-15" style="margin-bottom:10px;display:flex">
+                <i class="fa fa-star" aria-hidden="true" style="margin-right:5px"></i>
+                <i class="fa fa-star" aria-hidden="true" style="margin-right:5px"></i>
+                <i class="fa fa-star-o" aria-hidden="true" style="margin-right:5px"></i>
+                <i class="fa fa-star-o" aria-hidden="true" style="margin-right:5px"></i>
+                <i class="fa fa-star-o" aria-hidden="true" style="margin-right:5px"></i>
+                @{
+                    var wide2 = loaisao[1] * 5;
+                }
+                <div style="margin-left:15px;height:17px;width:200px;background-color:#f4f1e8;border-radius: 0.25rem;">
+                    <div style="position:absolute;height:17px;width:@(wide2)px;background-color:#f9b900;border-radius: 0.25rem;"></div>
+                </div>
+            </div>
+            <div class="single_product_ratings mb-15" style="margin-bottom:10px;display:flex">
+                <i class="fa fa-star" aria-hidden="true" style="margin-right:5px"></i>
+                <i class="fa fa-star-o" aria-hidden="true" style="margin-right:5px"></i>
+                <i class="fa fa-star-o" aria-hidden="true" style="margin-right:5px"></i>
+                <i class="fa fa-star-o" aria-hidden="true" style="margin-right:5px"></i>
+                <i class="fa fa-star-o" aria-hidden="true" style="margin-right:5px"></i>
+                @{
+                    var wide1 = loaisao[0] * 5;
+                }
+                <div style="margin-left:15px;height:17px;width:200px;background-color:#f4f1e8;border-radius: 0.25rem;">
+                    <div style="position:absolute;height:17px;width:@(wide1)px;background-color:#f9b900;border-radius: 0.25rem;"></div>
+                </div>
+            </div>
+        </div>
+        <div id="divcomment" hidden>
+            <div class="form-group">
+                <label for="comment">Đánh giá của bạn</label>
+                <textarea class="form-control" id="comment" rows="7" style="height: 100px"></textarea>
+            </div>
+            <!------------------------------------------------------------------------------------------------------------------>
+            <input type="hidden" id="star" />
+            <button class="btn btn-primary" style="margin-top:10px;width:60px;background-color:red;">Gửi</button>
+        </div>
+        @if (ViewBag.User is not null)
+        {
+            <div style="width:100%;display:flex;justify-content: center;">
+                <button class="btn btn-primary" style="margin-top:30px;width:200px;background-color:orange;">Đánh giá sản phẩm</button>
+            </div>
+        }
+    </div>
+    @foreach (var danhgia in ViewBag.Danhgiasp)
+    {
+        <div class="card-body" style="padding-left:20px;padding-bottom:0px;">
+            <img src="~/user/img/user/login1.png" style="height:50px;border-radius: 50%;" /><span style="font-weight:bold"> @danhgia.MaNguoidung</span>
+            <div class="single_product_ratings mb-15">
+                @for (var i = 0; i < 5; i++)
+                {
+                    if (i < danhgia.Sao)
+                    {
+                        <i class="fa fa-star" aria-hidden="true"></i>
+                    }
+                    else
+                    {
+                        <i class="fa fa-star-o" aria-hidden="true"></i>
+                    }
+                }
+            </div>
+            <p style="margin-bottom:5px;">@danhgia.Danhgia</p>
+        </div>
+        <hr width="100%" size="1px" align="center" style="margin-top:0px;margin-bottom:0px;">
+    }
+</div>

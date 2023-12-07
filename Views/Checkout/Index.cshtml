@@ -1,0 +1,133 @@
+﻿
+@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Views/Shared/_LayoutUser.cshtml";
+}
+
+@model QuanLyBanGiay_ADMIN.Models_User.Cart;
+<script>
+    function SetDiachi() {
+        var dc = document.getElementById("diachigiaohang").value;
+        document.getElementById("diachigh").value = dc;
+    }
+</script>
+<style>
+    .billing_details h3 {
+        border-bottom: 0px solid #eee;
+        padding-bottom: 10px;
+        margin-bottom: 0px;
+        margin-top: 30px;
+    }
+</style>
+<script src="~/user/js/checkout/checkout_index.js"></script>
+<body>
+    <!-- Start Banner Area -->
+    <section class="banner-area organic-breadcrumb" style="height: 330px;">
+        <div class="container">
+            <div class="breadcrumb-banner d-flex flex-wrap align-items-center justify-content-end" style="padding-top: 100px;">
+                <div class="col-first">
+                    <h1>Checkout</h1>
+                    <nav class="d-flex align-items-center">
+                        <a href="Home">Home<span class="lnr lnr-arrow-right"></span></a>
+                        <a href="#">Checkout</a>
+                    </nav>
+                </div>
+            </div>
+        </div>
+    </section>
+    <!-- End Banner Area -->
+    <!--================Checkout Area =================-->
+    <div class="container" style="display:flex;justify-content:center;margin-top:50px;">
+        <h2 style="font-family: ui-rounded;font-weight:bold;">Hoàn thiện thông tin đơn hàng</h2>
+    </div>
+    <section class="checkout_area section_gap" style="padding-top:5px;">
+        <div class="container">
+            <div class="billing_details">
+                <div class="row">
+                    <div class="col-lg-6">
+                        <h3 style="font-family: ui-rounded;font-weight:bold;">Thông tin người dùng</h3>
+                        <div class="row contact_form" novalidate="novalidate">
+                            <!--Tên người dùng-->
+                            <div class="col-md-6 form-group p_star">
+                                <input onkeyup="checkten('TenNguoidung','tbTenNguoidung')" type="text" class="form-control" id="TenNguoidung" name="TenNguoidung" maxlength="25" placeholder="Họ và tên" onfocus="this.placeholder = ''" onblur="this.placeholder = 'Họ và tên'">
+                            </div>
+                            <!--Thông báo tên người dùng-->
+                            <div class="col-md-6 form-group p_star">
+                                <div id="tbTenNguoidung" style="color:red;text-align:center;padding-top:5px;">
+                                </div>
+                            </div>
+                            <!--Số điện thoại-->
+                            <div class="col-md-6 form-group p_star">
+                                <input onkeyup="checksdt('SodienthoaiNv','tbSodienthoaiNv');checkten('TenNguoidung','tbTenNguoidung')" type="text" class="form-control" id="SodienthoaiNv" name="SodienthoaiNv" maxlength="10" placeholder="Số điện thoại" onfocus="this.placeholder = ''" onblur="this.placeholder = 'Số điện thoại'">
+                            </div>
+                            <!--Thông báo số diện thoại-->
+                            <div class="col-md-6 form-group p_star">
+                                <div id="tbSodienthoaiNv" style="color:red;text-align:center;padding-top:5px;">
+                                </div>
+                            </div>
+                            <!--Gmail người dùng-->
+                            <div class="col-md-6 form-group p_star">
+                                <input onkeyup="checkgmail('gmail','tbgmail');checksdt('SodienthoaiNv','tbSodienthoaiNv')" type="text" class="form-control" id="gmail" name="gmail" placeholder="Địa chỉ Email" onfocus="this.placeholder = ''" onblur="this.placeholder = 'Địa chỉ Email( VD: abc@gmail.com)'">
+                            </div>
+                            <!--Thông báo gmail-->
+                            <div class="col-md-6 form-group p_star">
+                                <div id="tbgmail" style="color:red;text-align:center;padding-top:5px;">
+                                </div>
+                            </div>
+                            <!--Ngày đặt hàng-->
+                            <div class="col-md-6 form-group p_star">
+                                <h3 style="font-family: ui-rounded;font-weight:bold;">Ngày đặt hàng hàng</h3>
+                                <input type="text" class="form-control" id="ngaydathang" name="ngaydathang" readonly>
+                            </div>
+                            <!--Địa chỉ-->
+                            <div class="col-md-12 form-group">
+                                <div class="creat_account">
+                                    <h3 style="font-family: ui-rounded;font-weight:bold;">Địa chỉ nhận hàng</h3>
+                                </div>
+                                <textarea onkeyup="checkdiachi('diachigiaohang','tbdiachigiaohang');checkgmail('gmail','tbgmail')" class="form-control" name="diachigiaohang" id="diachigiaohang" rows="1" maxlength="150" placeholder="Thông tin địa chỉ nơi nhận hàng (Ghi rõ số nhà)" style="margin-top:0px;"></textarea>
+                                <div id="tbdiachigiaohang" style="color:red;"></div>
+                                <input type="hidden" id="diachigh" name="diachigh" value="" />
+                            </div>
+                            <div class="col-md-12 form-group">
+                                <div class="creat_account">
+                                    <h3 style="font-family: ui-rounded;font-weight:bold;">Chọn phương thức thanh toán</h3>
+                                    <div class="form-check" style="margin-top:0px;margin-bottom:5px;">
+                                        <input class="form-check-input" type="radio" name="phuongthucthanhtoan" id="phuongthucthanhtoan" value="tienmat" onclick="SetDiachi();checkdiachi('diachigiaohang','tbdiachigiaohang');checkhttt_select('tbhinhthuctt')">
+                                        <label class="form-check-label" for="flexRadioDefault1">
+                                            Tiền mặt
+                                        </label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="phuongthucthanhtoan" id="phuongthucthanhtoan" value="tienthe" onclick="SetDiachi();checkdiachi('diachigiaohang','tbdiachigiaohang');checkhttt_select('tbhinhthuctt')">
+                                        <label class="form-check-label" for="flexRadioDefault2">
+                                            Tiền thẻ
+                                        </label>
+                                    </div>
+                                    <div id="tbhinhthuctt" style="color:red;"></div>
+                                </div>
+                            </div>
+                            <div class="col-md-12 form-group">
+                                <button class="primary-btn" onclick="checkhttt_button('tbhinhthuctt')">Thanh toán</button>
+                            </div>
+                        </div>
+                    </div>
+                    @*Thông tin hóa đơn bill/default*@
+                    @await Component.InvokeAsync("Bill")
+                </div>
+            </div>
+        </div>
+    </section>
+    <!--================End Checkout Area =================-->
+</body>
+<script>
+    // Lấy ngày hôm nay
+    var today = new Date();
+
+    // Chuyển định dạng ngày thành "dd/MM/yyyy"
+    var formattedDate = ('0' + today.getDate()).slice(-2) + '/'
+        + ('0' + (today.getMonth() + 1)).slice(-2) + '/'
+        + today.getFullYear();
+
+    // Đặt giá trị cho trường input text
+    document.getElementById('ngaydathang').value = formattedDate;
+</script>

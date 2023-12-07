@@ -1,0 +1,71 @@
+﻿@model IEnumerable<QuanLyBanGiay_ADMIN.Models.Discount>
+@{
+    ViewData["Title"] = "Details";
+    Layout = "~/Views/Shared/_LayoutAdmin.cshtml";
+}
+@{
+    
+    @using NodaTime
+    @using NodaTime.Extensions
+
+    foreach(var d in Model)
+    {
+        d.Tilegiamgia = Math.Round(d.Tilegiamgia * 100);
+    }
+    LocalDate ngayHienTai = LocalDate.FromDateTime(DateTime.Now);
+ 
+
+}
+<div class="row">
+    @foreach(var d in Model)
+    {
+        <div class="col-lg-6 col-8">
+            <div class="small-box bg-danger">
+                <div class="inner">
+
+                    <h4>  VOUCHER  @d.Tilegiamgia %  <i class="far fa-check fa-solid nav-icon"></i> </h4>
+                    <p>Code: @d.MaGiamgia</p>
+                    <p>Điều kiện: @d.DieuKien</p>
+                    <p>Thời gian: @string.Format("{0:dd-MM-yyyy}",d.Ngaygiamgia) đến @string.Format("{0:dd-MM-yyyy}",d.Ngayhethan)</p>
+                    <p>
+                        Thời gian: 
+                            @if(Period.Between(ngayHienTai, LocalDate.FromDateTime(d.Ngaygiamgia), PeriodUnits.Days).Days > 0)
+                        {
+                            var chuoi = "Sắp diễn ra";
+                            @Html.Raw(chuoi);
+                        }
+                        @if (Period.Between(ngayHienTai, LocalDate.FromDateTime(d.Ngaygiamgia), PeriodUnits.Days).Days < 0)
+                        {
+                            @if (Period.Between(ngayHienTai, LocalDate.FromDateTime(d.Ngayhethan), PeriodUnits.Days).Days < 0)
+                            {
+                                var chuoi1 = "Đã hết hạn";
+                                @Html.Raw(chuoi1);
+                                <a onclick="Hoi(event)" asp-action="DeleteVoucher" asp-controller="SanPham" asp-route-MaGiamgia="@d.MaGiamgia" class="small-box-footer btn-primary"> Xóa Voucher</a>
+                            }
+                            else @if (Period.Between(ngayHienTai, LocalDate.FromDateTime(d.Ngayhethan), PeriodUnits.Days).Days >= 0)
+                            {
+                                var chuoi = "Đang diễn ra, còn " + Period.Between(ngayHienTai, LocalDate.FromDateTime(d.Ngayhethan), PeriodUnits.Days).Days + " ngày";
+                                @Html.Raw(chuoi);
+                            }
+                        }
+
+                    </p>
+
+                </div>
+                <a asp-action="SanPham_ApDung" asp-controller="SanPham" asp-route-MaDieukien="@d.MaDieukien" class="small-box-footer">Áp dụng <i class="fas fa-arrow-circle-right"></i></a>
+            </div>
+        </div>
+    }
+</div>
+<script>
+    function Hoi(event) {
+        var result = confirm("Bạn có chắc chắn xóa sản phẩm?");
+        if (result == true) {
+
+        }
+        else {
+            event.preventDefault();
+            // window.location.href='../SanPham/Index';
+        }
+    }
+</script>

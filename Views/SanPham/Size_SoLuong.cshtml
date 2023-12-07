@@ -1,0 +1,66 @@
+﻿@model IEnumerable<QuanLyBanGiay_ADMIN.Models.Size_theoSanPham>
+@{
+    ViewData["Title"] = "SizeSP";
+    Layout = "~/Views/Shared/_LayoutAdmin.cshtml";
+}
+<style>
+    .table td, .table th {
+        padding: 0.75rem;
+        vertical-align: middle;
+        border-top: 1px solid #dee2e6;
+    }
+</style>
+<div class="container">
+    <div class="row">
+        <div class="col-12 offset">
+            <h1 class="text-info text-center p-1 border border-dark">CÁC SIZE ĐANG CÓ</h1>
+            <a class="btn btn-sm btn-warning m-1 p-1 text-light" asp-action="ThemSize" asp-controller="SanPham" asp-route-Ma_Sanpham="@ViewBag.MaSanpham">Thêm size mới</a>
+            <table class="table table-bordered text-center">
+                <thead class="bg-dark text-light">
+                    <tr>
+                        <th>Mã sản phẩm</th>
+                        <th>Tên sản phẩm</th>
+                        <th>Ảnh</th>
+                        <th>Size</th>
+                        <th>Số lượng</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var d in Model)
+                    {
+                        <tr>
+
+                            <td>@d.MaSanpham</td>
+                            <td>@d.Ten_Sanpham</td>
+                            <td>
+                                <img class="product-image" src="~/img/product/@d.Link1" />
+                            </td>
+                            <td>@d.Ma_Size</td>
+                            <td>@d.SoLuong</td>
+
+                            <td>
+                                <a class="btn btn-sn btn-primary" asp-action="UpDateSize_SoLuong" asp-controller="SanPham" asp-route-Ma_Size="@d.Ma_Size" asp-route-Ma_Sanpham="@d.MaSanpham">Update</a>
+                                <a onclick="Hoi(event)" type="submit" class="btn btn-primary" style="background-color:red" asp-route-Ma_Size="@d.Ma_Size" asp-route-MaSanpham="@d.MaSanpham" asp-action="DeleteSize" asp-controller="SanPham">Delete</a>
+                                </td>
+                        </tr>
+                    }
+
+                </tbody>
+            </table>
+
+        </div>
+    </div>
+</div>
+<script>
+    function Hoi(event) {
+        var result = confirm("Bạn có chắc chắn xóa size này?");
+        if (result == true) {
+
+        }
+        else {
+            event.preventDefault();
+
+        }
+    }
+</script>

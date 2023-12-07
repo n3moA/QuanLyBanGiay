@@ -1,0 +1,647 @@
+﻿
+@{
+    ViewData["Title"] = "ShopProductDetail";
+    Layout = "~/Views/Shared/_LayoutUser.cshtml";
+}
+
+@model List<QuanLyBanGiay_ADMIN.Models_User.SanphamDetail>
+@using System.Globalization;
+
+@{
+    CultureInfo culture = new CultureInfo("en-US");
+    culture.NumberFormat.NumberGroupSeparator = ".";
+}
+@{
+    var danhsachdanhgia = ViewBag.Danhgiasp;
+    var sum = 0.0; var index = 0.0; var sosaotb = 0.0;
+    int[] loaisao = new int[5];
+    Array.Clear(loaisao, 0, loaisao.Length);
+    //Tính số sao đánh giá tb, số lượng người nhận xét theo từng loại sao
+    foreach (var dg in danhsachdanhgia)
+    {
+        sum += dg.Sao;
+        index += 1;
+        loaisao[dg.Sao - 1]++;
+    }
+    if (index != 0.0)
+    {
+        sosaotb = (double)(sum / index);
+    }
+    // Tính số lượng sản phẩm để hiển thị còn hay không
+    var soluongsp = Model.Sum(e => e.sanPhamSizes.Sum(sps => sps.SoLuong));
+}
+<!-- Core Style CSS -->
+<link href="~/user/productdetail/css/core-style.css" rel="stylesheet" />
+<!-- Responsive CSS -->
+<link href="~/user/productdetail/css/responsive.css" rel="stylesheet" />
+<link href="~/user/css/attention.css" rel="stylesheet" />
+<link href="~/user/css/checkoutbill.css" rel="stylesheet" />
+<link rel="stylesheet" href="/user/css/Mine.css">
+<script src="~/user/js/attention.js"></script>
+
+<link rel="stylesheet" href="/user/css/Mine.css">
+<link href="~/user/css/site.css" rel="stylesheet" />
+
+<style>
+    .product {
+        margin: 0px;
+        width: 260px;
+        height: 300px;
+        background: white;
+        border: 1px solid #333;
+        position: relative;
+        z-index: 1;
+    }
+
+    .ribbon-wrapper {
+        width: 85px;
+        height: 88px;
+        overflow: hidden;
+        position: absolute;
+        top: -3px;
+        left: -3px;
+    }
+
+    .ribbon {
+        font: bold 15px sans-serif;
+        color: #333;
+        text-align: center;
+        -webkit-transform: rotate(-45deg);
+        -moz-transform: rotate(-45deg);
+        -ms-transform: rotate(-45deg);
+        -o-transform: rotate(-45deg);
+        position: relative;
+        padding: 7px 0;
+        top: 15px;
+        left: -30px;
+        width: 120px;
+        background-color: #ff6139;
+        color: #fff;
+    }
+</style>
+<!-- Modal hiển thị bảng size giày -->
+<div class="modal fade" id="bangsizeModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true" style="padding-top:50px;background-color: #23232373;">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header" style="padding:0px 10px 0px 0px">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <img id="anhchonsize" src="" style="width:100%" />
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Modal hiển thị bảng đánh giá -->
+<div class="modal fade" id="danhgiaModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true" style="padding-top:50px;background-color: #23232373;">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header" style="padding:0px 10px 0px 0px">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div style="text-align: center;">
+                    <div id="Ma_Sanpham" style="height:auto;width:100%;padding-top:20px;margin-bottom:10px;">
+                        <!------------------------------------------------------------------------------------------------------------------------->
+                        <!--Phần đánh giá sao-->
+                        <label style="font-size:20px;">Đánh giá chất lượng sản phẩm</label>
+                        <div class="rating" style="margin-bottom:20px;">
+                            <input type="radio" name="rating" value="5" id="5" onclick="document.getElementById('star').value=this.value">
+                            <label for="5">☆</label>
+                            <input type="radio" name="rating" value="4" id="4" onclick="document.getElementById('star').value=this.value">
+                            <label for="4">☆</label>
+                            <input type="radio" name="rating" value="3" id="3" onclick="document.getElementById('star').value=this.value">
+                            <label for="3">☆</label>
+                            <input type="radio" name="rating" value="2" id="2" onclick="document.getElementById('star').value=this.value">
+                            <label for="2">☆</label>
+                            <input type="radio" name="rating" value="1" id="1" onclick="document.getElementById('star').value=this.value">
+                            <label for="1">☆</label>
+                        </div>
+                        <div class="form-group">
+                            <label for="comment">Phản hồi của khách hàng</label>
+                            <textarea class="form-control" id="comment" rows="7" style="height: 100px"></textarea>
+                        </div>
+                        <!------------------------------------------------------------------------------------------------------------------>
+                        <input type="hidden" id="star" />
+                        <button type="button" data-dismiss="modal" aria-label="Close" class="close btn btn-primary" style="margin-top:10px;width:100px;background-color:red;height:40px;" onclick="pushComment('star','comment','@Model[0].Masanpham','@ViewBag.Makhachhang')">Gửi</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<body>
+    <!-- <<<<<<<<<<<<<<<<<<<< Single Product Details Area Start >>>>>>>>>>>>>>>>>>>>>>>>> -->
+    @foreach (var item in Model)
+    {
+        <section class="single_product_details_area section_padding_0_100" style="padding-bottom:30px">
+            <div class="container" style="margin-top:140px;">
+                <div class="row">
+                    <div class="col-12 col-md-4">
+                        <div class="single_product_thumb">
+                            <div id="product_details_slider" class="carousel slide" data-ride="carousel">
+                                <ol class="carousel-indicators" style="margin-left:50px;">
+                                    <li class="active" data-target="#product_details_slider" data-slide-to="0" style="background-image: url(/user/img/product/@item.link1);">
+                                    </li>
+                                    <li class="active" data-target="#product_details_slider" data-slide-to="1" style="background-image: url(/user/img/product/@item.link2);">
+                                    </li>
+                                    <li class="active" data-target="#product_details_slider" data-slide-to="2" style="background-image: url(/user/img/product/@item.link3);">
+                                    </li>
+                                </ol>
+                                <div class="carousel-inner">
+                                    <div class="carousel-item active">
+                                        <a class="gallery_img" href="~/user/img/product/@item.link1">
+                                            <img class="d-block w-100" src="~/user/img/product/@item.link1" style="height:400px;width:auto" alt="First slide">
+                                        </a>
+                                    </div>
+                                    <div class="carousel-item">
+                                        <a class="gallery_img" href="~/user/img/product/@item.link2">
+                                            <img class="d-block w-100" src="~/user/img/product/@item.link2" style="height:400px;width:auto" alt="Second slide">
+                                        </a>
+                                    </div>
+                                    <div class="carousel-item">
+                                        <a class="gallery_img" href="~/user/img/product/@item.link3">
+                                            <img class="d-block w-100" src="~/user/img/product/@item.link3" style="height:400px;width:auto" alt="Third slide">
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-12 col-md-4">
+                        <div class="single_product_desc">
+
+                            <h4 class="title"><a href="#">Giày @item.TenSanpham</a></h4>
+
+                            <h4 class="price">@item.Giagoc<span> VND</span></h4>
+                            @if (soluongsp > 0)
+                            {
+                                <p>Tình trạng: <span>Còn hàng</span></p>
+                            }
+                            else
+                            {
+                                <p>Tình trạng: <span style="color:red;">Hết hàng</span></p>
+                            }
+                            <div class="single_product_ratings mb-15">
+                                @if (sosaotb == 0)
+                                {
+                                    for (var i = 0; i < 5; i++)
+                                    {
+                                        <i class="fa fa-star-o" aria-hidden="true"></i>
+                                    }
+                                    <p style="color:red">Sản phẩm chưa được xếp hạng</p>
+                                }
+                                else
+                                {
+                                    for (var i = 0; i < 5; i++)
+                                    {
+                                        if (i < sosaotb)
+                                        {
+                                            <i class="fa fa-star" aria-hidden="true"></i>
+                                        }
+                                        else
+                                        {
+                                            <i class="fa fa-star-o" aria-hidden="true"></i>
+                                        }
+                                    }
+                                    <p style="color:green">Đánh giá @Math.Round(sosaotb, 1) sao</p>
+                                }
+                            </div>
+
+                            <div class="widget size mb-15">
+                                <!--Nút bấm hiển thị bảng chọn size-->
+                                <h6 style="font-size: 23px;font-weight:bold">Chọn size giày<span><button type="button" class="btn btn-link" data-toggle="modal" data-target="#bangsizeModal" onclick="getanhchonsize('@item.Hangsanxuat')">(Bảng chọn size)</button></span></h6>
+                                <div class="widget-desc">
+                                    <ul>
+                                        @foreach (var sp in item.sanPhamSizes)
+                                        {
+                                            if (sp.SoLuong != 0)
+                                            {
+                                                <li><input class="btn btn-outline-danger" type="button" name="@sp.Ma_Size" id="@sp.Ma_Size" value="@sp.Ma_Size" onclick="enableButton();getsize(@sp.Ma_Size,'size');document.getElementById('slmax').value=@sp.SoLuong;document.getElementById('qty').max=@sp.SoLuong; document.getElementById('soluong').textContent='Size '+@sp.Ma_Size+' còn '+@sp.SoLuong+' sản phẩm';"></li>
+                                            }
+                                            else
+                                            {
+                                                <li><input class="btn btn-outline-danger" type="button" name="@sp.Ma_Size" id="@sp.Ma_Size" value="@sp.Ma_Size" disabled></li>
+                                            }
+                                        }
+                                    </ul>
+                                </div>
+                            </div>
+                            <div id="divsoluong" class="widget mb-30" style="border-bottom: 0px solid #ebebeb;padding-bottom: 42px;">
+                                <h5 id="soluong" name="soluong" style="font-weight:bold"></h5>
+                            </div>
+                            <!-- Add to Cart Form -->
+                            @if (soluongsp != 0)
+                            {
+                                <form class="cart clearfix mb-50 d-flex" method="get" action="~/Cart/AddToCart">
+                                    <div class="quantity">
+                                        <input type="hidden" name="size" id="size" />
+                                        <input type="hidden" name="slmax" id="slmax" />
+                                        <input type="hidden" name="productID" value="@item.Masanpham" />
+                                        <span id="inbutton" class="qty-minus" onclick="var effect = document.getElementById('qty'); var qty = effect.value; if( !isNaN( qty ) &amp;&amp; qty &gt; 1 ) effect.value--;return false;" hidden><i class="fa fa-minus" aria-hidden="true"></i></span>
+                                        <input onkeyup="check_Soluong()" type="number" class="qty-text" id="qty" step="1" min="1" name="quantity" value="1" disabled />
+                                        <span id="debutton" class="qty-plus" onclick="check_Soluong_Tang();var effect = document.getElementById('qty'); var qty = effect.value; if( !isNaN( qty )) effect.value++;return false;" hidden><i class="fa fa-plus" aria-hidden="true"></i></span>
+                                    </div>
+                                    <input id="addtocartButton" type="submit" name="addtocart" value="Add to cart" class="btn cart-submit d-block" disabled />
+                                </form>
+                            }
+                            else
+                            {
+                                <div>
+                                    <a class="btn btn-primary" href="/Shop/Index" style="padding-left:22px;padding-right:22px;">Quay lại mua hàng</a>
+                                </div>
+                            }
+                        </div>
+                    </div>
+
+                    <div class="col-12 col-md-4">
+                        <img src="~/user/img/size/cachdosize1.jpg" style="width:auto" />
+                    </div>
+                </div>
+            </div>
+        </section>
+        // Mô tả sản phẩm
+        <section class="single_product_details_area section_padding_0_100" style="padding-bottom:0px;">
+            <div class="container" style="margin-top:10px;">
+                <div id="accordion" role="tablist">
+                    <!--Thông tin sản phẩm-->
+                    <div class="card" style="width: auto;">
+                        <div class="card-header" role="tab" id="headingOne" style="background-color:yellow">
+                            <h6 class="mb-0">
+                                <a data-toggle="collapse" href="#collapseOne" aria-expanded="true" aria-controls="collapseOne">Thông tin sản phẩm</a>
+                            </h6>
+                        </div>
+
+                        <div class="collapse show" role="tabpanel" aria-labelledby="headingOne" data-parent="#accordion">
+                            <div class="card-body">
+                                <h4>Giày @item.TenSanpham</h4>
+                                <p>@ViewBag.Motasp.Mota</p>
+                                <h4>Thông số</h4>
+                                @{
+                                    string[] mangthongso = ViewBag.Motasp.Thongso.Split('/');
+                                }
+                                @foreach (var thongso in mangthongso)
+                                {
+                                    <p>. @thongso</p>
+                                }
+                            </div>
+                        </div>
+                    </div>
+                    <!--Khung đánh giá sản phẩm-->
+                    <div class="card" style="width: auto;">
+                        <div class="card-header" role="tab" id="headingTwo" style="background-color:pink">
+                            <h6 class="mb-0">
+                                <a class="collapsed" data-toggle="collapse" href="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">Đánh giá</a>
+                            </h6>
+                        </div>
+                        <div class="collapse show" role="tabpanel" aria-labelledby="headingTwo" data-parent="#accordion">
+                            <div style="border-radius: 0.25rem;margin:20px;padding:30px;width:350px;border:2px;background-color:#caff99">
+                                <div class="single_product_ratings mb-15">
+                                    <h2>@Math.Round(sosaotb, 1)/5</h2>
+                                    @if (sosaotb == 0)
+                                    {
+                                        for (var i = 0; i < 5; i++)
+                                        {
+                                            <i class="fa fa-star-o" aria-hidden="true" style="font-size: 25px"></i>
+                                        }
+                                        <p style="color:red">Sản phẩm chưa được xếp hạng</p>
+                                    }
+                                    else
+                                    {
+                                        for (var i = 0; i < 5; i++)
+                                        {
+                                            if (i < sosaotb)
+                                            {
+                                                <i class="fa fa-star" aria-hidden="true" style="font-size: 25px"></i>
+                                            }
+                                            else
+                                            {
+                                                <i class="fa fa-star-o" aria-hidden="true" style="font-size: 25px"></i>
+                                            }
+                                        }
+                                    }
+                                    <span>(@index phản hồi)</span>
+                                </div>
+                                <div>
+                                    <div class="single_product_ratings mb-15" style="margin-bottom:10px;display:flex">
+                                        <i class="fa fa-star" aria-hidden="true" style="margin-right:5px"></i>
+                                        <i class="fa fa-star" aria-hidden="true" style="margin-right:5px"></i>
+                                        <i class="fa fa-star" aria-hidden="true" style="margin-right:5px"></i>
+                                        <i class="fa fa-star" aria-hidden="true" style="margin-right:5px"></i>
+                                        <i class="fa fa-star" aria-hidden="true" style="margin-right:5px"></i>
+                                        @{
+                                            var wide5 = loaisao[4] * 5;
+                                        }
+                                        <div style="margin-left:15px;height:17px;width:200px;background-color:#f4f1e8;border-radius: 0.25rem;">
+                                            <div style="position:absolute;height:17px;width:@(wide5)px;background-color:#f9b900;border-radius: 0.25rem;"></div>
+                                        </div>
+                                    </div>
+                                    <div class="single_product_ratings mb-15" style="margin-bottom:10px;display:flex">
+                                        <i class="fa fa-star" aria-hidden="true" style="margin-right:5px"></i>
+                                        <i class="fa fa-star" aria-hidden="true" style="margin-right:5px"></i>
+                                        <i class="fa fa-star" aria-hidden="true" style="margin-right:5px"></i>
+                                        <i class="fa fa-star" aria-hidden="true" style="margin-right:5px"></i>
+                                        <i class="fa fa-star-o" aria-hidden="true" style="margin-right:5px"></i>
+                                        @{
+                                            var wide4 = loaisao[3] * 5;
+                                        }
+                                        <div style="margin-left:15px;height:17px;width:200px;background-color:#f4f1e8;border-radius: 0.25rem;">
+                                            <div style="position:absolute;height:17px;width:@(wide4)px;background-color:#f9b900;border-radius: 0.25rem;"></div>
+                                        </div>
+                                    </div>
+                                    <div class="single_product_ratings mb-15" style="margin-bottom:10px;display:flex">
+                                        <i class="fa fa-star" aria-hidden="true" style="margin-right:5px"></i>
+                                        <i class="fa fa-star" aria-hidden="true" style="margin-right:5px"></i>
+                                        <i class="fa fa-star" aria-hidden="true" style="margin-right:5px"></i>
+                                        <i class="fa fa-star-o" aria-hidden="true" style="margin-right:5px"></i>
+                                        <i class="fa fa-star-o" aria-hidden="true" style="margin-right:5px"></i>
+                                        @{
+                                            var wide3 = loaisao[2] * 5;
+                                        }
+                                        <div style="margin-left:15px;height:17px;width:200px;background-color:#f4f1e8;border-radius: 0.25rem;">
+                                            <div style="position:absolute;height:17px;width:@(wide3)px;background-color:#f9b900;border-radius: 0.25rem;"></div>
+                                        </div>
+                                    </div>
+                                    <div class="single_product_ratings mb-15" style="margin-bottom:10px;display:flex">
+                                        <i class="fa fa-star" aria-hidden="true" style="margin-right:5px"></i>
+                                        <i class="fa fa-star" aria-hidden="true" style="margin-right:5px"></i>
+                                        <i class="fa fa-star-o" aria-hidden="true" style="margin-right:5px"></i>
+                                        <i class="fa fa-star-o" aria-hidden="true" style="margin-right:5px"></i>
+                                        <i class="fa fa-star-o" aria-hidden="true" style="margin-right:5px"></i>
+                                        @{
+                                            var wide2 = loaisao[1] * 5;
+                                        }
+                                        <div style="margin-left:15px;height:17px;width:200px;background-color:#f4f1e8;border-radius: 0.25rem;">
+                                            <div style="position:absolute;height:17px;width:@(wide2)px;background-color:#f9b900;border-radius: 0.25rem;"></div>
+                                        </div>
+                                    </div>
+                                    <div class="single_product_ratings mb-15" style="margin-bottom:10px;display:flex">
+                                        <i class="fa fa-star" aria-hidden="true" style="margin-right:5px"></i>
+                                        <i class="fa fa-star-o" aria-hidden="true" style="margin-right:5px"></i>
+                                        <i class="fa fa-star-o" aria-hidden="true" style="margin-right:5px"></i>
+                                        <i class="fa fa-star-o" aria-hidden="true" style="margin-right:5px"></i>
+                                        <i class="fa fa-star-o" aria-hidden="true" style="margin-right:5px"></i>
+                                        @{
+                                            var wide1 = loaisao[0] * 5;
+                                        }
+                                        <div style="margin-left:15px;height:17px;width:200px;background-color:#f4f1e8;border-radius: 0.25rem;">
+                                            <div style="position:absolute;height:17px;width:@(wide1)px;background-color:#f9b900;border-radius: 0.25rem;"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                                @if (ViewBag.User is not null)
+                                {
+                                    <div style="width:100%;display:flex;justify-content: center;">
+                                        <button id="buttoncomment" type="button" class="btn btn-primary" data-toggle="modal" data-target="#danhgiaModal" style="margin-top:30px;width:200px;background-color:orange;">Đánh giá sản phẩm</button>
+                                    </div>
+                                }
+                                else
+                                {
+                                    <div style="width:100%;display:flex;justify-content: center;">
+                                        <a href="/Login" class="btn btn-primary" style="margin-top:30px;width:200px;background-color:orange;" onclick="statebefore()">Đăng nhập để đánh giá</a>
+                                    </div>
+                                    <script>
+                                        function statebefore() {
+                                            var currentURL = window.location.href;
+                                            $.ajax({
+                                                url: "/Login/SetURL",
+                                                type: "GET",
+                                                data: {
+                                                    url: currentURL
+                                                }
+                                            });
+                                        }
+                                    </script>
+                                }
+                            </div>
+                            <!--Hiển thị các đánh giá sản phẩm-->
+                            <div id="hienthidanhgia">
+                                @foreach (var danhgia in ViewBag.Danhgiasp)
+                                {
+                                    <div class="card-body" style="padding-left:20px;padding-bottom:0px;">
+                                        <img src="~/user/img/user/login1.png" style="height:50px;border-radius: 50%;" /><span style="font-weight:bold"> @danhgia.MaNguoidung</span>
+                                        <div class="single_product_ratings mb-15">
+                                            @for (var i = 0; i < 5; i++)
+                                            {
+                                                if (i < danhgia.Sao)
+                                                {
+                                                    <i class="fa fa-star" aria-hidden="true"></i>
+                                                }
+                                                else
+                                                {
+                                                    <i class="fa fa-star-o" aria-hidden="true"></i>
+                                                }
+                                            }
+                                        </div>
+                                        <p style="margin-bottom:5px;">@danhgia.Danhgia</p>
+                                    </div>
+                                    <hr width="100%" size="1px" align="center" style="margin-top:0px;margin-bottom:0px;">
+                                }
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    }
+    <!-- <<<<<<<<<<<<<<<<<<<< Single Product Details Area End >>>>>>>>>>>>>>>>>>>>>>>>> -->
+    <section class="you_may_like_area clearfix">
+        <div class="container">
+            <div class="row">
+                <div class="col-12">
+                    <div class="section_heading text-center">
+                        <h3>Top sản phẩm</h3>
+                    </div>
+                </div>
+            </div>
+            <div class="row" style="padding-left:50px;">
+                <div class="you_make_like_slider owl-carousel">
+                    <!----------------------------------------------------Sản phẩm tương tự--------------------------------------------------------------------------->
+                    @foreach (var value in ViewBag.Danhsachsp)
+                    {
+                        <div class='product-grid2' style='margin-bottom: 20px;margin-top: 10px;'>
+                            <div class='product-image2 product'>
+                                <a href='ShopProductDetail?id=@value.Masanpham'>
+                                    <img class='pic-1' src='/user/img/product/@value.Anhsp' style='height:300px;width:260px;' />
+                                    <img class='pic-2' src='/user/img/product/@value.Anhhover' style='height:300px;width:260px;' />
+                                </a>
+                                @if (value.Tilegiamgia > 0)
+                                {
+                                    <div class="ribbon-wrapper">
+                                        <div class="ribbon">
+                                            @value.Tilegiamgia
+                                            <span>% OFF</span>
+                                        </div>
+                                    </div>
+                                }
+                                <ul class='social'>
+                                    <li><a href='ShopProductDetail?id=@value.Masanpham' data-tip='View Details'><i class='fa fa-eye'></i></a></li>
+                                    <li><a data-toggle='ajax-modal' data-target='#productdetail' data-url='AddProduct?id=@value.Masanpham' data-tip='Add to cart'><i class='fa fa-shopping-cart'></i></a></li>
+                                </ul>
+                            </div>
+                            <div class='product-content' style="width: 260px;">
+                                <h3 class='title'><a href='ShopProductDetail?id=@value.Masanpham'>@value.TenSanpham</a></h3>
+                                @if (value.Tilegiamgia > 0)
+                                {
+                                    <span class="price" style="text-decoration: line-through;color: #5739325c;font-size: 13px;">@value.Giagoc<span> VND</span><span></span></span>
+                                }
+                                @{
+                                    int giaban1 = (int)((decimal)(1 - (decimal)value.Tilegiamgia / 100) * (decimal)value.Giagoc);
+                                    string giaban = giaban1.ToString("N0", culture);
+                                }
+                                <h6 class="l-through" style="color:#21ac26;font-size:16px;">@giaban<span> VND</span></h6>
+                            </div>
+                        </div>
+                    }
+                    <!------------------------------------------------------------------------------------------------------------------------------->
+                </div>
+            </div>
+        </div>
+    </section>
+    <div id="PlaceHolderHere"></div>
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $("body").on("click", "a[data-toggle='ajax-modal']", function (event) {
+                var placeholder = $('#PlaceHolderHere');
+                var url = $(this).data('url');
+                $.get(url).done(function (data) {
+                    placeholder.html(data);
+                    placeholder.find('.modal').modal('show');
+                })
+            });
+        });
+    </script>
+    <script>
+        function getsize(id1, id2) {
+            var s = document.getElementById(id1).value;
+            document.getElementById(id2).value = s;
+        }
+        // Validate
+        //Kiểm tra số lượng sản phẩm nhập vào
+        function check_Soluong() {
+            var sl_chon = parseInt(document.getElementById("qty").value, 10);
+            var sl_max = parseInt(document.getElementById('qty').max, 10);
+            if (sl_chon > sl_max) {
+                new Attention.Alert({
+                    title: 'Quá số lượng',
+                    content: 'Số lượng đặt hàng đã vượt quá số lượng còn lại !'
+                });
+                document.getElementById("qty").value = "1";
+            }
+            if (document.getElementById("qty").value == "") {
+                document.getElementById("qty").value = "1"
+            }
+        }
+
+        function check_Soluong_Tang() {
+            var sl_chon = parseInt(document.getElementById("qty").value, 10);
+            var sl_max = parseInt(document.getElementById('qty').max, 10);
+            if (sl_chon >= sl_max) {
+                document.getElementById("qty").value = document.getElementById("qty").max - 1;
+            }
+        }
+        //Enable disable nút Addtocart trước khi chọn size
+
+        function enableButton() {
+            document.getElementById("debutton").hidden = false;
+            document.getElementById("inbutton").hidden = false;
+            document.getElementById("qty").disabled = false;
+            document.getElementById("addtocartButton").disabled = false;
+            document.getElementById("divsoluong").style.paddingBottom = '10px';
+        }
+
+        // LẤy ảnh chọn sai cho thẻ img
+        function getanhchonsize(link) {
+            var imgsize = document.getElementById('anhchonsize');
+            if (link == 'ADD') {
+                imgsize.src = '/user/img/size/addidasize.png';
+            }
+            else if (link == 'BIT') {
+                imgsize.src = '/user/img/size/bitsize.jpg';
+            }
+            else if (link == 'CON') {
+                imgsize.src = '/user/img/size/conversesize.jpg';
+            }
+            else if (link == 'MIZ') {
+                imgsize.src = '/user/img/size/mizunosize.jpg';
+            }
+            else {
+                imgsize.src = '/user/img/size/nikesize.png';
+            }
+        }
+    </script>
+    <script>
+        $(document).ready(function () {
+            window.addEventListener('popstate', function (event) {
+                console.log(event.state)
+            });
+        })
+    </script>
+    <script>
+        function pushComment(idstar, idcomment, masanpham, makhachhang) {
+        @*Lấy số lượng sao và đánh giá*@
+                                    var numstar = document.getElementById(idstar).value;
+            var comment = document.getElementById(idcomment).value;
+            $.ajax({
+                url: "/Checkout/AddCommentToDB",
+                type: "GET",
+                data: {
+                    masanpham: masanpham,
+                    comment: comment,
+                    numstar: numstar,
+                    makhachhang: makhachhang
+                },
+                success: function (data) {
+                    alert(data.status);
+                },
+                error: function () {
+                    alert("Đã xảy ra lỗi khi tải dữ liệu!");
+                }
+            });
+        }
+    </script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+
+            var scrollToTopBtn = document.getElementById('scrollUp');
+
+            // Hiển thị hoặc ẩn nút khi cuộn trang
+            window.addEventListener('scroll', function () {
+                if (window.scrollY > 300) {
+                    scrollToTopBtn.style.display = 'block';
+                } else {
+                    scrollToTopBtn.style.display = 'none';
+                }
+            });
+
+            // Lướt lên trên khi nút được bấm
+            scrollToTopBtn.addEventListener('click', function () {
+                window.scrollTo({
+                    top: 0,
+                    behavior: 'smooth'
+                });
+            });
+
+        });
+    </script>
+    <!-- /.wrapper end -->
+    <!-- jQuery (Necessary for All JavaScript Plugins) -->
+    <script src="~/user/productdetail/js/jquery/jquery-2.2.4.min.js"></script>
+    <!-- Popper js -->
+    <script src="~/user/productdetail/js/popper.min.js"></script>
+    <!-- Bootstrap js -->
+    <script src="~/user/productdetail/js/bootstrap.min.js"></script>
+    <!-- Plugins js -->
+    <script src="~/user/productdetail/js/plugins.js"></script>
+    <!-- Active js -->
+    <script src="~/user/productdetail/js/active.js"></script>
+</body>
+
+

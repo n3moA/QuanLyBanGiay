@@ -1,0 +1,69 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+	List<QuanLyBanGiay_ADMIN.Models.Nhasanxuat> nhasanxuat = ViewBag.Brand;
+	IEnumerable<string> mausac = ViewBag.Color;
+}
+@model IEnumerable<QuanLyBanGiay_ADMIN.Models.LoaiGiay>
+<link href="~/user/css/virtual-select.min.css" rel="stylesheet" />
+<script src="~/user/js/virtual-select.min.js"></script>
+<!--Loại giày-->
+<div id="example-select" style="margin-top: 10px;margin-right:16px;width: 250px; border: 2px solid #b2ff9b;">
+	<select id="chonloaigiay" multiple name="chonloaigiay" placeholder="Loại giày" data-search="true" data-silent-initial-value-set="true">
+		@foreach (var item in Model)
+		{
+			<option id="@item.TenLoai" value="@item.MaLoai">@item.TenLoai</option>
+		}
+	</select>
+</div>
+<!--Hãng giày-->
+<div id="example-select" style="margin-top: 10px;margin-right:16px;width: 250px; border: 2px solid #b2ff9b;">
+	<select id="chonhanggiay" multiple name="chonhanggiay" placeholder="Hãng giày" data-search="true" data-silent-initial-value-set="true">
+		@foreach (var item in nhasanxuat)
+		{
+			<option id="@item.TenNhasanxuat" value="@item.MaNhasanxuat">@item.TenNhasanxuat</option>
+		}
+	</select>
+</div>
+<!--Màu sắc-->
+<div id="example-select" style="margin-top: 10px;margin-right:16px;width: 250px;border: 2px solid #b2ff9b;">
+	<select id="chonmaugiay" multiple name="chonmaugiay" placeholder="Màu sắc" data-search="true" data-silent-initial-value-set="true">
+		@foreach (var item in mausac)
+		{
+			<option id="@item" value="@item">@item</option>
+		}
+	</select>
+</div>
+<!--Giá giày-->
+<div id="example-select" style="margin-top: 10px;margin-right:16px;width: 250px;border: 2px solid #b2ff9b;">
+	<select id="chongiagiay" multiple name="chongiagiay" placeholder="Giá" data-search="true" data-silent-initial-value-set="true">
+		<option id="min" value="0-1000000">Dưới 1.000.000</option>
+		<option id="medmin" value="1000000-2000000">1.000.000 -> 2.000.000</option>
+		<option id="medmax" value="2000000-3000000">2.000.000 -> 3.000.000</option>
+		<option id="max" value="3000000-999999999">Trên 3.000.000</option>
+	</select>
+</div>
+<script>
+
+</script>
+<script type="text/javascript">
+	VirtualSelect.init({
+		ele: '#chonhanggiay',
+		selectedValue: '',
+		disableAllOptionsSelectedText: true
+	});
+	VirtualSelect.init({
+		ele: '#chonloaigiay',
+		disableAllOptionsSelectedText: true
+	});
+	VirtualSelect.init({
+		ele: '#chonmaugiay',
+		disableAllOptionsSelectedText: true
+	});
+	VirtualSelect.init({
+		ele: '#chongiagiay',
+		disableAllOptionsSelectedText: true
+	});
+</script>
+

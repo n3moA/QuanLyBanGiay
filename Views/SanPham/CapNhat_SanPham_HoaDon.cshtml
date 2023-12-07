@@ -1,0 +1,197 @@
+﻿@model QuanLyBanGiay_ADMIN.Models.CapNhat_SanPham_trongHoaDon
+@{
+    ViewData["Title"] = "Details";
+    Layout = "~/Views/Shared/_LayoutAdmin.cshtml";
+}
+
+
+<div class="container">
+    <div class="row">
+        <div class="col-8 offset-2">
+            <div class="card">
+                <div class="card-header">
+                    <h2 class="text-info">THAY ĐỔI SỐ LƯỢNG SẢN PHẨM ĐÃ ĐẶT</h2>
+                    @*<a href="~/SanPham/Index"><u style="color: blue">Back to List</u></a>*@
+                    Người đặt hàng: <b>@ViewBag.ThongTin.TenNguoidung</b> <br />
+                    Địa chỉ: <b>@ViewBag.ThongTin.Diachigiaohang</b><br>
+                    Số điện thoại: <b>@ViewBag.ThongTin.sdt</b>
+
+                </div>
+                <div class="card-body">
+                    <form method="post" asp-action="CapNhat_SanPham_HoaDon">
+                        <div class="form-group" hidden>
+                            <label for="exampleInputEmail1">Mã hóa đơn</label>
+                            <input type="text" class="form-control" asp-for="MaHoadon" readonly>
+                        </div>
+                        <div class="form-group">
+                            <label for="exampleInputEmail1">Mã sản phẩm</label>
+                            <input type="text" class="form-control" asp-for="MaSanpham" readonly>
+                        </div>
+                        <div class="form-group">
+                            <label for="exampleInputEmail1">Tên sản phẩm</label>
+                            <input type="text" class="form-control" asp-for="Ten_Sanpham" readonly>
+                        </div>
+                        <table class="table text-center">
+                            <thead style="border-bottom:0px">
+                                <tr>
+                                    <th>
+                                        <div class="form-group">
+                                            <label for="exampleInputEmail1">Size</label>
+                                            <input type="text" class="form-control text-center" asp-for="size" readonly>
+                                        </div>
+                                    </th>
+                                    <th>
+                                        <div class="form-group">
+                                            <label for="exampleInputEmail1">Số lượng đặt mua</label>
+                                            <p style="color:red">* Còn @ViewBag.SoLuongTon.SoLuong sản phẩm</p>
+                                            <input type="number" class="form-control text-center" asp-for="Soluong" id="myInput">
+                                        </div>
+                                    </th>
+                                </tr>
+                            </thead>
+                            
+                        </table>
+
+
+                        <div class="form-group">
+                            <table class="table table-bordered text-center">
+                                <label for="exampleInputEmail1">Hình ảnh </label>&ensp;
+                                <thead class="bg-aqua text-light">
+                                    <tr>
+                                        <th>
+                                            <div class="form-group">
+                                                <label for="exampleInputEmail1" style="color:black">Ảnh 1</label>
+                                                <input type="text" class="form-control" asp-for="Link1" readonly>
+                                            </div>
+                                        </th>
+                                        <th>
+                                            <div class="form-group">
+                                                <label for="exampleInputEmail1" style="color:black">Ảnh 2</label>
+                                                <input type="text" class="form-control" asp-for="Link2" readonly>
+                                            </div>
+                                        </th>
+                                        <th>
+                                            <div class="form-group">
+                                                <label for="exampleInputEmail1" style="color:black">Ảnh 3</label>
+                                                <input type="text" class="form-control" asp-for="Link3" readonly>
+                                            </div>
+                                        </th>
+
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>
+                                            <img class="product-image" src="~/img/product/@Model.Link1" />
+                                        </td>
+                                        <td>
+                                            <img class="product-image" src="~/img/product/@Model.Link2" />
+                                        </td>
+                                        <td>
+                                            <img class="product-image" src="~/img/product/@Model.Link3" />
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <br />
+                        <button onclick="clickSave(event)" type="submit" class="btn btn-primary">Cập nhật</button>
+                        <a onclick="Hoi(event)" type="submit" class="btn btn-primary" style="background-color:red" asp-action="DeleteSanPham_HoaDon" asp-controller="SanPham" asp-route-MaHoadon="@Model.MaHoadon" asp-route-MaSanpham="@Model.MaSanpham" asp-route-size="@Model.size">Xóa sản phẩm</a>
+
+                    </form>
+                                    </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div id="overlay" class="overlay">
+    <div id="error-message" class="error-message">
+        <span>Vượt quá số lượng hiện có, vui lòng cập nhật lại!</span><br />
+        <button id="closeButton" class="close-button">Đóng</button>
+    </div>
+</div>
+<style>
+    .overlay {
+        display: none;
+        position: fixed;
+        top: 0;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        background-color: rgba(0, 0, 0, 0.5);
+        z-index: 999;
+    }
+
+    .error-message {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        padding: 20px;
+        background-color: #fff;
+        border: 1px solid #ff0000;
+        border-radius: 5px;
+        z-index: 1000;
+    }
+
+    .close-button {
+        padding: 5px 10px;
+        background-color: #ff0000;
+        color: #fff;
+        border: none;
+        border-radius: 3px;
+        cursor: pointer;
+        margin-top: 10px;
+    }
+
+        .close-button:hover {
+            background-color: #cc0000;
+        }
+
+
+</style>
+<script>
+    const inputElement = document.getElementById('myInput');
+    const overlay = document.getElementById('overlay');
+    const closeButton = document.getElementById('closeButton');
+
+    inputElement.addEventListener('input', function () {
+        if (this.value > @ViewBag.SoLuongTon.SoLuong) {
+            overlay.style.display = 'block';
+        } else {
+            overlay.style.display = 'none';
+        }
+    });
+
+    closeButton.addEventListener('click', function () {
+        overlay.style.display = 'none';
+        inputElement.value = @ViewBag.SoLuongTon.SoLuong;
+        inputElement.innerHTML = inputElement.value;
+    });
+
+    function clickSave(event){
+        const inputElement = document.getElementById('myInput');
+        if (inputElement.value > @ViewBag.SoLuongTon.SoLuong){
+            overlay.style.display = 'block';
+            event.preventDefault();
+        }
+    }
+
+    function Hoi(event) {
+        var result = confirm("Bạn có chắc chắn xóa sản phẩm?");
+        if (result == true) {
+
+        }
+        else {
+            event.preventDefault();
+            // window.location.href='../SanPham/Index';
+        }
+    }
+
+</script>
+
+
+
+
+

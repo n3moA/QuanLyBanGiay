@@ -1,0 +1,107 @@
+﻿
+@{
+    ViewData["Title"] = "AddBill";
+    Layout = "~/Views/Shared/_LayoutUser.cshtml";
+}
+
+@model QuanLyBanGiay_ADMIN.Models_User.Hoadonhienthi
+<style>
+	.table td {
+		vertical-align: middle;
+	}
+</style>
+<body>
+	<!-- Start Banner Area -->
+	<section class="banner-area organic-breadcrumb" style="height: 330px;">
+		<div class="container">
+			<div class="breadcrumb-banner d-flex flex-wrap align-items-center justify-content-end" style="padding-top: 100px;">
+				<div class="col-first">
+					<h1>Mua hàng thành công</h1>
+					<nav class="d-flex align-items-center">
+						<a href="~/Home">Về trang chủ<span class="lnr lnr-arrow-right"></span></a>
+						<a href="~/Shop/Index">Tiếp tục mua hàng</a>
+					</nav>
+				</div>
+			</div>
+		</div>
+	</section>
+	<!-- End Banner Area -->
+</body>
+<!--================Order Details Area =================-->
+<section class="order_details section_gap">
+	<div class="container">
+		<h3 class="title_confirmation" style="font-size:20px;color:deeppink">Đặt hàng thành công! Cảm ơn bạn đã mua hàng của chúng tôi!</h3>
+		<div class="row order_d_inner">
+			<div class="col-lg-4">
+				<div class="details_item">
+					<h4>Thông tin hóa đơn</h4>
+					<ul class="list">
+						<li><a href="#"><span style="width: 160px;">Ngày đặt hàng</span> : @Model.Ngaydathang</a></li>
+						<li><a href="#"><span style="width: 160px;">Tổng tiền</span> : @Model.Tongtien VND</a></li>
+						<li><a href="#"><span style="width: 160px;">Phương thức thanh toán</span> : @Model.Phuongthucthanhtoan</a></li>
+						<li><a href="#"><span style="width: 160px;">Trạng thái đơn hàng</span> : Đang chờ xử lý</a></li>
+					</ul>
+				</div>
+			</div>
+			<div class="col-lg-4">
+				<div class="details_item">
+					<h4>Thông tin người nhận</h4>
+					<ul class="list">
+						<li><a href="#"><span>Tên người nhận</span> : @Model.Tennguoinhan</a></li>
+						<li><a href="#"><span>Số điện thoại</span> : @Model.Sodienthoai</a></li>
+					</ul>
+				</div>
+			</div>
+			<div class="col-lg-4">
+				<div class="details_item">
+					<h4>Địa chỉ giao hàng</h4>
+					<ul class="list">
+						<li><a href="#">@Model.Diachigiaohang</a></li>
+					</ul>
+				</div>
+			</div>
+		</div>
+		<div class="order_details_table" style="margin-top:0px">
+			<h2>Chi tiết hóa đơn</h2>
+			<div class="table-responsive">
+				<table class="table">
+					<thead>
+						<tr>
+							<th style="width: 250px;">Tên sản phẩm</th>
+							<th>Ảnh minh họa</th>
+							<th style="text-align: center;">Cỡ</th>
+							<th style="text-align: center;">Số lượng</th>
+							<th style="text-align: center;">Thành tiền</th>
+						</tr>
+					</thead>
+					<tbody>
+						@foreach (var item in Model.Danhsachhang)
+						{
+							<tr>
+								<td>@item.Product.TenSanpham</td>
+								<th><img src="~/user/img/product/@item.Product.Anhsp" style="width:100px;height:100px;" /></th>
+								<td style="text-align: center;">@item.Product.size</td>
+								<td style="text-align: center;">@item.Quantity</td>
+								<td style="text-align: center;">@(((decimal)1 - (decimal)item.Product.Tilegiamgia / 100) * (decimal)item.Product.Giagoc)<span> VND</span></td>
+							</tr>
+						}
+					</tbody>
+				</table>
+			</div>
+		</div>
+		<div style="position:relative;margin-top:40px;">
+			<a class="btn btn-primary" style="position:absolute;left:100px;background-color: #88433a;" href="~/Shop/Index">
+				<img src="~/user/img/viewbill/backhome.png" style="height:25px;" />
+				Quay lại mua hàng
+			</a>
+			@if (ViewBag.Username is not null)
+			{
+				<a class="btn btn-primary" style="position:absolute;right:100px;background-color: #f248bb;" href="~/Checkout/ViewBill">
+					Xem hóa đơn của bạn
+					<img src="~/user/img/viewbill/viewbill.png" style="height:25px;" />
+				</a>
+			}
+		</div>
+	</div>
+</section>
+<!--================End Order Details Area =================-->

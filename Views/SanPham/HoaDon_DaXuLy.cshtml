@@ -1,0 +1,126 @@
+﻿@model X.PagedList.IPagedList<QuanLyBanGiay_ADMIN.Models.HienThiHoaDon>
+
+@using X.PagedList.Mvc.Core
+@using X.PagedList.Web.Common;
+@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Views/Shared/_LayoutAdmin.cshtml";
+}
+
+<style>
+
+    .custom-btn:active {
+        background-color: red; /* Màu nền khi nút được nhấn */
+        border-color: red; /* Màu viền khi nút được nhấn */
+        color: white; /* Màu chữ khi nút được nhấn */
+    }
+
+    #lst tbody tr:hover {
+        background-color: coral;
+    }
+</style>
+<style>
+    .table td, .table th {
+        padding: 0.25rem;
+        width: auto;
+        vertical-align: middle;
+        border-top: 1px solid #dee2e6;
+    }
+</style>
+<div class="container">
+    <div class="row">
+        <div class="col-14 offset">
+            <h1 class="text-info text-center p-1 border border-dark">HÓA ĐƠN ĐANG GIAO</h1>
+
+            <table id="lst" class="table table-bordered text-center">
+                <thead class="bg-dark text-light">
+                    <tr>
+                        <th>Mã hóa đơn</th>
+                        <th>Mã khách hàng</th>
+                        <th>Tên khách hàng</th>
+                        <th>Số điện thoại</th>
+                        <th>Địa chỉ giao hàng</th>
+                        <th>Ngày đặt hàng</th>
+                        <th>Phương thức thanh toán</th>
+                        <th>Trạng thái thanh toán</th>
+                        <th>Tổng tiền</th>
+                        <th>Trạng thái hóa đơn</th>
+                        <th colspan="2">Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var d in Model)
+                    {
+                        <tr>
+
+                            <td>@d.MaHoadon</td>
+                            <td>@d.MaKhachhang</td>
+                            <td>@d.TenNguoidung</td>
+                            <td>@d.sdt</td>
+                            <td>@d.Diachigiaohang</td>
+                            <td>@string.Format("{0:dd-MM-yyyy}",d.Ngaydathang)</td>
+                            <td>@d.PhuongthucTT</td>
+                            @if(d.TrangthaiTT == "Đã thanh toán")
+                            {
+                                <td style="color:forestgreen">@d.TrangthaiTT</td>
+                            }
+                            @if (d.TrangthaiTT == "Chưa thanh toán")
+                            {
+                                <td style="color:red">@d.TrangthaiTT</td>
+                            }
+                            <td>@string.Format("{0:N0}", d.Thanhtien)</td>
+                            <td> <i class="far fa-light fa-truck-fast fa-solid nav-icon" style="color:forestgreen"></i> @d.Trangthaihoadon </td>
+                            <td>
+                                <a class="btn btn-sn btn-primary" asp-action="ChiTietHoaDon_DaXuLy" asp-controller="SanPham" asp-route-MaHoadon="@d.MaHoadon">Xem hóa đơn</a>
+                                @*<a onclick="Hoi(event)" type="submit" class="btn btn-primary" style="background-color:red" asp-action="#" asp-controller="SanPham" asp-route-MaHoadon="@d.MaHoadon">Hủy</a>*@
+                            </td>
+                            <td>
+                                <a onclick="Hoi1(event)" class="btn btn-success float-right" asp-action="XacNhanGiaoHang" asp-controller="SanPham" asp-route-MaHoadon="@d.MaHoadon" asp-route-MaKhachhang="@d.MaKhachhang"> Đã nhận hàng</a>
+                            </td>
+
+                        </tr>
+                    }
+
+                </tbody>
+            </table>
+
+        </div>
+    </div>
+</div>
+<div class="page-info" style="text-align:center">
+    Trang @(Model.PageNumber) trên @Model.PageCount
+</div>
+<div class="card-tools">
+    <ul class="pagination pagination-sm">
+        @Html.PagedListPager(Model,page=>Url.Action("HoaDon_DaXuLy","SanPham",new{page = page}), new PagedListRenderOptions{
+        LiElementClasses = new string[] {"page-item"},
+        PageClasses = new string[] {"page-link"},
+        Display = PagedListDisplayMode.IfNeeded,
+        MaximumPageNumbersToDisplay = 3, // Số trang tối đa để hiển thị
+        EllipsesFormat = "&#8230;", // Định dạng dấu ba chấm
+        })
+
+    </ul>
+
+</div>
+<script>
+    function Hoi(event) {
+        var result = confirm("Bạn có chắc chắn hủy hóa đơn này?");
+        if (result == true) {
+
+        }
+        else {
+            event.preventDefault();
+        }
+    }
+    function Hoi1(event) {
+        var result = confirm("Đã nhận hàng thành công?");
+        if (result == true) {
+
+        }
+        else {
+            event.preventDefault();
+        }
+    }
+
+</script>

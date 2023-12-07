@@ -1,0 +1,77 @@
+﻿@model X.PagedList.IPagedList<QuanLyBanGiay_ADMIN.Models.ListSanPham_Voucher>
+@using X.PagedList.Mvc.Core
+@using X.PagedList.Web.Common;
+@{
+    ViewData["Title"] = "Lít_KhaDung";
+    Layout = "~/Views/Shared/_LayoutAdmin.cshtml";
+}
+
+<style>
+    .product-image {
+        max-width: 100px;
+        max-height: 100px;
+    }
+</style>
+<style>
+    .table td, .table th {
+        padding: 0.75rem;
+        vertical-align: middle;
+        border-top: 1px solid #dee2e6;
+    }
+</style>
+<div class="container">
+    <div class="row">
+        <div class="col-20 offset">
+            <h1 class="text-info text-center p-1 border border-dark">SẢN PHẨM CÓ THỂ ÁP DỤNG</h1>
+            <table class="table table-bordered text-center">
+                <thead class="bg-dark text-light">
+                    <tr>
+                        <th>Mã sản phẩm</th>
+                        <th>Tên sản phẩm</th>
+                        <th>Màu sắc</th>
+                        <th>Hãng sản xuất</th>
+                        <th>Loại giày</th>
+                        <th>Ảnh</th>
+                        <th>Giá gốc</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var d in Model)
+                    {
+                        <tr>
+
+                            <td>@d.Ma_Sanpham</td>
+                            <td>@d.Ten_Sanpham</td>
+                            <td>@d.Mausac</td>
+                            <td>@d.Ten_Nhasanxuat</td>
+                            <td>@d.Ten_loai</td>
+                            <td>
+                                <img class="product-image" src="~/img/product/@d.Link1" />
+                            </td>
+                            <td>@string.Format("{0:N0}", d.Giagoc)</td>
+                            <td><a class="btn btn-sn btn-primary" asp-action="ApDung_Voucher" asp-controller="SanPham" asp-route-MaSanpham="@d.Ma_Sanpham" asp-route-MaDieukien="@ViewBag.MaDK">Áp dụng</a></td>
+                        </tr>
+                    }
+
+                </tbody>
+            </table>
+
+        </div>
+    </div>
+</div>
+<div class="page-info" style="text-align:center">
+    Trang @(Model.PageNumber) trên @Model.PageCount
+</div>
+<div class="card-tools">
+    <ul class="pagination pagination-sm">
+        @Html.PagedListPager(Model,page=>Url.Action("SanPham_ApDung","SanPham",new{page = page,MaDieukien = ViewBag.MaDK}), new PagedListRenderOptions{
+        LiElementClasses = new string[] {"page-item"},
+        PageClasses = new string[] {"page-link"},
+        Display = PagedListDisplayMode.IfNeeded,
+        MaximumPageNumbersToDisplay = 3, // Số trang tối đa để hiển thị
+        EllipsesFormat = "&#8230;", // Định dạng dấu ba chấm
+        })
+
+    </ul>
+</div>

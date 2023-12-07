@@ -1,0 +1,94 @@
+﻿@model X.PagedList.IPagedList<QuanLyBanGiay_ADMIN.Models.SanPham_Applied>
+@using X.PagedList.Mvc.Core
+@using X.PagedList.Web.Common;
+@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Views/Shared/_LayoutAdmin.cshtml";
+}
+
+<style>
+    .product-image {
+        max-width: 100px;
+        max-height: 100px;
+    }
+</style>
+<style>
+    .table td, .table th {
+        padding: 0.75rem;
+        vertical-align: middle;
+        border-top: 1px solid #dee2e6;
+    }
+</style>
+<div class="container">
+    <div class="row">
+        <div class="col-12 offset">
+            <h1 class="text-info text-center p-1 border border-dark">SẢN PHẨM ĐÃ ÁP DỤNG VOUCHER</h1>
+            <table class="table table-bordered text-center">
+                <thead class="bg-dark text-light">
+                    <tr>
+                        <th>Mã sản phẩm</th>
+                        <th>Tên sản phẩm</th>
+                        <th>Màu sắc</th>
+                        <th>Hãng sản xuất</th>
+                        <th>Loại giày</th>
+                        <th>Ảnh</th>
+                        <th>Mã giảm giá</th>
+                        <th colspan="2">Giá áp dụng</th>
+                        
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var d in Model)
+                    {
+                        <tr>
+
+                            <td>@d.Ma_Sanpham</td>
+                            <td>@d.Ten_Sanpham</td>
+                            <td>@d.Mausac</td>
+                            <td>@d.Ten_Nhasanxuat</td>
+                            <td>@d.Ten_loai</td>
+                            <td>
+                                <img class="product-image" src="~/img/product/@d.Link1" />
+                            </td>
+                            <td>@d.Ma_Giamgia</td>
+                            <td>@string.Format("{0:N0}", d.GiaApDung)</td>
+                            <td style="text-decoration: line-through;">
+                            @string.Format("{0:N0}", d.Giagoc)</td>
+                            <td><a onclick="Hoi(event)" class="btn btn-sn btn-danger" asp-action="BoVoucher" asp-controller="SanPham" asp-route-MaSanpham="@d.Ma_Sanpham">Bỏ Voucher</a></td>
+                        </tr>
+                    }
+
+                </tbody>
+            </table>
+
+        </div>
+    </div>
+</div>
+<div class="page-info" style="text-align:center">
+    Trang @(Model.PageNumber) trên @Model.PageCount
+</div>
+<div class="card-tools">
+    <ul class="pagination pagination-sm">
+        @Html.PagedListPager(Model,page=>Url.Action("SanPham_ApDung_Voucher","SanPham",new{page = page}), new PagedListRenderOptions{
+        LiElementClasses = new string[] {"page-item"},
+        PageClasses = new string[] {"page-link"},
+        Display = PagedListDisplayMode.IfNeeded,
+        MaximumPageNumbersToDisplay = 3, // Số trang tối đa để hiển thị
+        EllipsesFormat = "&#8230;", // Định dạng dấu ba chấm
+        })
+
+    </ul>
+</div>
+<script>
+    function Hoi(event) {
+        var result = confirm("Bạn có chắc chắn bỏ voucher này?");
+        if (result == true) {
+
+        }
+        else {
+            event.preventDefault();
+
+        }
+    }
+</script>

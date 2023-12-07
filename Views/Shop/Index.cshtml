@@ -1,0 +1,343 @@
+﻿@using X.PagedList.Mvc.Core;
+@using X.PagedList.Web;
+@using System;
+@using System.Globalization;
+
+@model X.PagedList.IPagedList<QuanLyBanGiay_ADMIN.Models_User.SanphamHienthi>
+
+@{
+	ViewData["Title"] = "ShopIndex";
+	Layout = "~/Views/Shared/LayoutCategory.cshtml";
+	CultureInfo culture = new CultureInfo("en-US");
+	culture.NumberFormat.NumberGroupSeparator = ".";
+	var pageCurrent = ViewBag.currentpage;
+	var numSize = ViewBag.numpage;
+	var pagePrevious = (pageCurrent > 1) ? pageCurrent - 1 : 1;
+	var pageNext = (pageCurrent < numSize) ? pageCurrent + 1 : numSize;
+}
+<link href="~/user/css/site.css" rel="stylesheet" />
+<link rel="stylesheet" href="/user/css/Mine.css">
+<style>
+	.product {
+		margin: 0px;
+		width: 260px;
+		height: 300px;
+		background: white;
+		border: 1px solid #333;
+		position: relative;
+		z-index: 1;
+	}
+
+	.ribbon-wrapper {
+		width: 85px;
+		height: 88px;
+		overflow: hidden;
+		position: absolute;
+		top: -3px;
+		left: -3px;
+	}
+
+	.ribbon {
+		font: bold 15px sans-serif;
+		color: #333;
+		text-align: center;
+		-webkit-transform: rotate(-45deg);
+		-moz-transform: rotate(-45deg);
+		-ms-transform: rotate(-45deg);
+		-o-transform: rotate(-45deg);
+		position: relative;
+		padding: 7px 0;
+		top: 15px;
+		left: -30px;
+		width: 120px;
+		background-color: #ff6139;
+		color: #fff;
+	}
+	/* styles.css */
+	#scrollToTopBtn {
+		display: none;
+		position: fixed;
+		bottom: 100px;
+		right: 40px;
+		font-size: 16px;
+		padding: 10px;
+		border: none;
+		border-radius: 5px;
+		background-color: #7effff;
+		color: #fff;
+		cursor: pointer;
+	}
+</style>
+<div id="PlaceHolderHere"></div>
+<div class="col-xl-12 col-lg-8 col-md-7">
+	<!-- Start Filter Bar -->
+	<div class="filter-bar d-flex flex-wrap align-items-center" style="background: white ;margin-bottom: 15px;position:relative">
+		<button onclick="hideshow()" id="filter" class="btn btn-outline-info waves-effect" style="position:absolute; left:100px;"><i class="fa fa-filter" aria-hidden="true"></i></button><span id="description">Show filter</span>
+		<div class="input-group" style="width:70%;margin-left:70px; position:absolute; right:100px;">
+			<input type="search" id="searchstring" name="searchstring" class="form-control rounded" style="margin-right:5px;" placeholder="Nhập Tên/Loại giày/Hãng sản xuất/Màu sắc ..." />
+			<input type="submit" class="btn btn-primary" style="width: 75.454546px;" value="Search" id="searchbutton" />
+		</div>
+	</div>
+	<div id="category" style="display:none;">
+		<div class="filter-bar d-flex flex-wrap align-items-center" style="background: #ffd3d3;margin-bottom: 5px;">
+			@await Component.InvokeAsync("Category")
+		</div>
+	</div>
+	<!--Start partial view-->
+	<div id="ViewShopIndexPartial">
+		<section class="lattest-product-area pb-40 category-list">
+			<div class="row" id="pageproduct">
+				@if (numSize != 0)
+				{
+					@foreach (var value in Model)
+					{
+						<div class='col-md-3 col-sm-6' style='margin-bottom: 20px;margin-top: 10px;'>
+							<div class='product-grid2'>
+								<div class='product-image2 product'>
+									<a href='ShopProductDetail?id=@value.Masanpham'>
+										<img class='pic-1' src='/user/img/product/@value.Anhsp' style='height:300px;width:260px;' />
+										<img class='pic-2' src='/user/img/product/@value.Anhhover' style='height:300px;width:260px;' />
+									</a>
+									@if (value.Tilegiamgia > 0)
+									{
+										<div class="ribbon-wrapper">
+											<div class="ribbon">
+												@value.Tilegiamgia
+												<span>% OFF</span>
+											</div>
+										</div>
+									}
+									<ul class='social'>
+										<li><a href='ShopProductDetail?id=@value.Masanpham' data-tip='View Details'><i class='fa fa-eye'></i></a></li>
+										<li><a data-toggle='ajax-modal' data-target='#productdetail' data-url='AddProduct?id=@value.Masanpham' data-tip='Add to cart'><i class='fa fa-shopping-cart'></i></a></li>
+									</ul>
+								</div>
+								<div class='product-content'>
+									<h3 class='title'><a href='ShopProductDetail?id=@value.Masanpham'>@value.TenSanpham</a></h3>
+									@if (value.Tilegiamgia > 0)
+									{
+										<span class="price" style="text-decoration: line-through;color: #5739325c;font-size: 13px;">@value.Giagoc<span> VND</span><span></span></span>
+									}
+									@{
+										int giaban1 = (int)((decimal)(1 - (decimal)value.Tilegiamgia / 100) * (decimal)value.Giagoc);
+										string giaban = giaban1.ToString("N0", culture);
+									}
+									<h6 class="l-through" style="color:#21ac26;font-size:16px;">@giaban<span> VND</span></h6>
+								</div>
+							</div>
+						</div>
+					}
+				}
+				else
+				{
+					<div class="container" style="text-align:center;margin-top:0px;">
+						<img src="~/user/img/category/no-products.jpg" style="width:500px;" />
+					</div>
+				}
+			</div>
+		</section>
+	</div>
+</div>
+<button id="scrollToTopBtn" style="height:44px;width:44px;">
+	<svg style="height:18px;width:18px;" xmlns="http://www.w3.org/2000/svg" id="Layer_1" data-name="Layer 1" viewBox="0 0 24 24" width="512" height="512"><path d="M19.5,0H4.5c-.829,0-1.5,.671-1.5,1.5s.671,1.5,1.5,1.5h7.247c-.143,.042-.278,.12-.391,.234l-5.087,5.191c-.574,.581-.167,1.575,.644,1.575h3.587v12.5c0,.829,.671,1.5,1.5,1.5s1.5-.671,1.5-1.5V10h3.587c.811,0,1.218-.994,.644-1.575L12.644,3.234c-.113-.114-.248-.192-.391-.234h7.247c.828,0,1.5-.671,1.5-1.5s-.672-1.5-1.5-1.5Z" /></svg>
+</button>
+<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script type="text/javascript">
+	$(document).ready(function () {
+
+		var page = 2; // Bắt đầu từ trang 2, vì trang 1 đã được tải trong hàm Index
+		var isFetchingData = false;
+
+		$(window).scroll(function () {
+			if (!isFetchingData && $(window).scrollTop() + $(window).height() >= $(document).height() - 300) {
+				// Nếu đang cuộn đến cuối trang
+				isFetchingData = true;
+				var MaLoai = $("#chonloaigiay").val();
+				var hangsanxuat = $("#chonhanggiay").val();
+				var mausac = $("#chonmaugiay").val();
+				var giaca = $("#chongiagiay").val();
+				var searchstring = $("#searchstring").val();
+				updateView(page, 12, MaLoai.toString(), searchstring.toString(), hangsanxuat.toString(), mausac.toString(), giaca.toString());
+				page++;
+			}
+		});
+
+		// Hàm cập nhật viewBillPartial
+		function updateView(productPage, size, MaLoai, searchstring, hangsanxuat, mausac, giaca) {
+			$.ajax({
+				url: "/Shop/PartialShopIndex",
+				type: "GET",
+				data: {
+					productPage: productPage,
+					size: size,
+					MaLoai: MaLoai,
+					searchstring: searchstring,
+					hangsanxuat: hangsanxuat,
+					mausac: mausac,
+					giaca: giaca
+				},
+				success: function (data) {
+					$('#ViewShopIndexPartial').append(data);
+					isFetchingData = false;
+				},
+				error: function () {
+					alert("Đã xảy ra lỗi khi tải dữ liệu!");
+					isFetchingData = false;
+				}
+			});
+		}
+		// Hiển thị khung phân loại sản phẩm
+		$("body").on("click", "a[data-toggle='ajax-modal']", function (event) {
+			var placeholder = $('#PlaceHolderHere');
+			var url = $(this).data('url');
+			$.get(url).done(function (data) {
+				placeholder.html(data);
+				placeholder.find('.modal').modal('show');
+			})
+		});
+		// BẤm nút tìm kiếm
+		$("#searchbutton").click(function () {
+			var MaLoai = $("#chonloaigiay").val();
+			var hangsanxuat = $("#chonhanggiay").val();
+			var mausac = $("#chonmaugiay").val();
+			var giaca = $("#chongiagiay").val();
+			var searchstring = $("#searchstring").val();
+			$("#ViewShopIndexPartial").empty();
+			page = 2;
+			updateView(1, 12, MaLoai.toString(), searchstring.toString(), hangsanxuat.toString(), mausac.toString(), giaca.toString());
+			var newstate = {
+				productPage: 1,
+				size: 12,
+				MaLoai: MaLoai,
+				searchstring: searchstring,
+				hangsanxuat: hangsanxuat,
+				mausac: mausac,
+				giaca: giaca
+			}
+			history.pushState(newstate, null, "/Shop/Index?productPage=1&size=12&MaLoai=" + MaLoai.toString() + "&searchstring=" + searchstring.toString() + "&hangsanxuat=" + hangsanxuat.toString() + "&mausac=" + mausac.toString() + "&giaca=" + giaca.toString())
+		});
+		$("#chonloaigiay").change(function () {
+			var MaLoai = $("#chonloaigiay").val();
+			var hangsanxuat = $("#chonhanggiay").val();
+			var mausac = $("#chonmaugiay").val();
+			var giaca = $("#chongiagiay").val();
+			var searchstring = $("#searchstring").val();
+			$("#ViewShopIndexPartial").empty();
+			page = 2;
+			updateView(1, 12, MaLoai.toString(), searchstring.toString(), hangsanxuat.toString(), mausac.toString(), giaca.toString());
+			var newstate = {
+				productPage: 1,
+				size: 12,
+				MaLoai: MaLoai,
+				searchstring: searchstring,
+				hangsanxuat: hangsanxuat,
+				mausac: mausac,
+				giaca: giaca
+			}
+			history.pushState(newstate, null, "/Shop/Index?productPage=1&size=12&MaLoai=" + MaLoai.toString() + "&searchstring=" + searchstring.toString() + "&hangsanxuat=" + hangsanxuat.toString() + "&mausac=" + mausac.toString() + "&giaca=" + giaca.toString())
+		});
+		$("#chonhanggiay").change(function () {
+			var MaLoai = $("#chonloaigiay").val();
+			var hangsanxuat = $("#chonhanggiay").val();
+			var mausac = $("#chonmaugiay").val();
+			var giaca = $("#chongiagiay").val();
+			var searchstring = $("#searchstring").val();
+			$("#ViewShopIndexPartial").empty();
+			page = 2;
+			updateView(1, 12, MaLoai.toString(), searchstring.toString(), hangsanxuat.toString(), mausac.toString(), giaca.toString());
+			var newstate = {
+				productPage: 1,
+				size: 12,
+				MaLoai: MaLoai,
+				searchstring: searchstring,
+				hangsanxuat: hangsanxuat,
+				mausac: mausac,
+				giaca: giaca
+			}
+			history.pushState(newstate, null, "/Shop/Index?productPage=1&size=12&MaLoai=" + MaLoai.toString() + "&searchstring=" + searchstring.toString() + "&hangsanxuat=" + hangsanxuat.toString() + "&mausac=" + mausac.toString() + "&giaca=" + giaca.toString())
+		});
+		$("#chonmaugiay").change(function () {
+			var MaLoai = $("#chonloaigiay").val();
+			var hangsanxuat = $("#chonhanggiay").val();
+			var mausac = $("#chonmaugiay").val();
+			var giaca = $("#chongiagiay").val();
+			var searchstring = $("#searchstring").val();
+			$("#ViewShopIndexPartial").empty();
+			page = 2;
+			updateView(1, 12, MaLoai.toString(), searchstring.toString(), hangsanxuat.toString(), mausac.toString(), giaca.toString());
+			var newstate = {
+				productPage: 1,
+				size: 12,
+				MaLoai: MaLoai,
+				searchstring: searchstring,
+				hangsanxuat: hangsanxuat,
+				mausac: mausac,
+				giaca: giaca
+			}
+			history.pushState(newstate, null, "/Shop/Index?productPage=1&size=12&MaLoai=" + MaLoai.toString() + "&searchstring=" + searchstring.toString() + "&hangsanxuat=" + hangsanxuat.toString() + "&mausac=" + mausac.toString() + "&giaca=" + giaca.toString())
+		});
+		$("#chongiagiay").change(function () {
+			var MaLoai = $("#chonloaigiay").val();
+			var hangsanxuat = $("#chonhanggiay").val();
+			var mausac = $("#chonmaugiay").val();
+			var giaca = $("#chongiagiay").val();
+			var searchstring = $("#searchstring").val();
+			$("#ViewShopIndexPartial").empty();
+			page = 2;
+			updateView(1, 12, MaLoai.toString(), searchstring.toString(), hangsanxuat.toString(), mausac.toString(), giaca.toString());
+			var newstate = {
+				productPage: 1,
+				size: 12,
+				MaLoai: MaLoai,
+				searchstring: searchstring,
+				hangsanxuat: hangsanxuat,
+				mausac: mausac,
+				giaca: giaca
+			}
+			history.pushState(newstate, null, "/Shop/Index?productPage=1&size=12&MaLoai=" + MaLoai.toString() + "&searchstring=" + searchstring.toString() + "&hangsanxuat=" + hangsanxuat.toString() + "&mausac=" + mausac.toString() + "&giaca=" + giaca.toString())
+		});
+	});
+
+</script>
+<script>
+	function redirectSL(id) {
+		var opt = document.getElementById(id).value;
+		window.location = "?size=" + opt;
+	}
+	function hideshow() {
+		var x = document.getElementById("category");
+		var y = document.getElementById("description");
+		if (x.style.display == "none") {
+			x.style.display = "block";
+			y.textContent = "Hide filter";
+		} else {
+			x.style.display = "none";
+			y.textContent = "Show filter";
+		}
+	}
+</script>
+<script>
+	document.addEventListener('DOMContentLoaded', function () {
+
+		var scrollToTopBtn = document.getElementById('scrollToTopBtn');
+
+		// Hiển thị hoặc ẩn nút khi cuộn trang
+		window.addEventListener('scroll', function () {
+			if (window.scrollY > 300) {
+				scrollToTopBtn.style.display = 'block';
+			} else {
+				scrollToTopBtn.style.display = 'none';
+			}
+		});
+
+		// Lướt lên trên khi nút được bấm
+		scrollToTopBtn.addEventListener('click', function () {
+			window.scrollTo({
+				top: 200,
+				behavior: 'smooth'
+			});
+		});
+
+	});
+</script>

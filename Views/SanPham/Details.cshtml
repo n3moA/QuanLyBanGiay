@@ -1,0 +1,134 @@
+﻿@model QuanLyBanGiay_ADMIN.Models.ChiTietSanPham
+@{
+    ViewData["Title"] = "Details";
+    Layout = "~/Views/Shared/_LayoutAdmin.cshtml";
+}
+
+
+<div class="container">
+    <div class="row">
+        <div class="col-8 offset-2">
+            <div class="card">
+                <div class="card-header">
+                    <h2 class="text-info">THÔNG TIN CHI TIẾT SẢN PHẨM</h2>
+                    <a href="~/SanPham/Index"><u style="color: blue">Back to List</u></a>
+                </div>
+                <div class="card-body">
+                    <form method="post" asp-action="Details">
+                        <div class="form-group">
+                            <label for="exampleInputEmail1">Mã sản phẩm</label>
+                            <input type="text" class="form-control" name="Ma_Sanpham" value="@Model.MaSanpham" readonly>
+                        </div>
+                        <div class="form-group">
+                            <label for="exampleInputEmail1">Tên sản phẩm</label>
+                            <input type="text" class="form-control" asp-for="Ten_Sanpham">
+                        </div>
+                        <div class="form-group">
+                            <label for="exampleInputEmail1">Màu sắc</label>
+                            <input type="text" class="form-control" asp-for="Mausac">
+                        </div>
+                        <table class="table border-0 text-center">
+                            <thead>
+                                <tr>
+                                    <th>
+                                        <div class="form-group">
+                                            <label for="exampleInputEmail1">Loại giày</label>
+                                            @Html.DropDownList( "MaLoai", new SelectList( ViewBag.LG_data,"MaLoai","TenLoai") ,new { @class = "form-control" })
+                                        </div>
+                                    </th>
+                                    <th>
+                                        <div class="form-group">
+                                        <label for="exampleInputEmail1">Hãng sản xuất</label>
+                                            @Html.DropDownList( "MaNhasanxuat", new SelectList( ViewBag.NSX_data,"MaNhasanxuat","TenNhasanxuat"),new { @class = "form-control" } )
+                                        </div>
+                                    </th>
+                                </tr>
+                            </thead>
+                        </table>
+                        
+                        
+                        <div class="form-group">
+                            <table class="table table-bordered text-center">
+                                <label for="exampleInputEmail1">Hình ảnh </label>&ensp;
+                                <a asp-action="UpDateHinhAnh" asp-controller="SanPham" asp-route-MaSanpham="@Model.MaSanpham">Thay đổi</a>
+                                    <thead class="bg-aqua text-light">
+                                    <tr>
+                                        <th>
+                                            <div class="form-group">
+                                                <label for="exampleInputEmail1" style="color:black">Ảnh 1</label>
+                                                <input type="text" class="form-control" asp-for="Link1" readonly>
+                                            </div>
+                                        </th>
+                                        <th>
+                                            <div class="form-group">
+                                                <label for="exampleInputEmail1" style="color:black" >Ảnh 2</label>
+                                                <input type="text" class="form-control" asp-for="Link2" readonly>
+                                            </div>
+                                        </th>
+                                        <th>
+                                            <div class="form-group">
+                                                <label for="exampleInputEmail1" style="color:black">Ảnh 3</label>
+                                                <input type="text" class="form-control" asp-for="Link3" readonly>
+                                            </div>
+                                        </th>
+                                        
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                        <tr>
+                                            <td>
+                                                <img class="product-image" src="~/img/product/@Model.Link1" />
+                                            </td>
+                                            <td>
+                                            <img class="product-image" src="~/img/product/@Model.Link2" />
+                                            </td>
+                                            <td>
+                                            <img class="product-image" src="~/img/product/@Model.Link3" />
+                                            </td>
+                                        </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="form-group">
+                            <label for="exampleInputEmail1">Bảng Size </label>&ensp;
+                            <a asp-action="Size_SoLuong" asp-controller="SanPham" asp-route-Ma_Sanpham="@Model.MaSanpham">Thay đổi</a>
+                            <table class="table table-bordered text-center">
+                                <thead class="bg-dark text-light">
+                                    <tr>
+                                        @foreach (var d in ViewBag.BangSize)
+                                        {
+                                            <th>@d.Ma_Size</th>
+                                        }
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        @foreach (var d in ViewBag.BangSize)
+                                        {
+                                            <td>@d.SoLuong</td>
+                                        }
+                                    </tr>
+                                </tbody>
+                            </table>
+
+                        </div>
+                        <div class="form-group">
+                            <label for="exampleInputEmail1">Giá gốc</label>
+                            <input type="text" class="form-control" asp-for="Giagoc">
+                        </div>
+                        <br />
+                        <button type="submit" class="btn btn-primary">SAVE</button>
+                       
+
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+
+

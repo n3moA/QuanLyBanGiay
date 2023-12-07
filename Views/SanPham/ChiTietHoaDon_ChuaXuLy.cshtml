@@ -1,0 +1,221 @@
+﻿@model IEnumerable<QuanLyBanGiay_ADMIN.Models.ChiTietHoaDon_ListSP>
+@{
+    ViewData["Title"] = "Details";
+    Layout = "~/Views/Shared/_LayoutAdmin.cshtml";
+}
+
+@{
+    decimal count = 0;
+    foreach (var d in Model)
+    {
+        count += (decimal)(d.Giagoc * (1 - d.Tilegiamgia) * d.Soluong);
+    }
+    var i = 0;
+    var ship = 0;
+    var ship1 = "";
+}
+<style>
+    .product-image {
+        max-width: 70%;
+        height: auto;
+        width: 60%;
+    }
+</style>
+<style>
+    .table td, .table th {
+        padding: 0.75rem;
+        vertical-align: middle;
+        border-top: 1px solid #dee2e6;
+    }
+</style>
+<section class="content">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-20 offset">
+                <div class="callout callout-info" style="color:red">
+                    <h5 ><i class="fas fa-danger"></i> Chú ý:</h5>
+                    <h5>Xác nhận từng sản phẩm trước khi xác nhận hóa đơn cho khách !</h5>
+                </div>
+
+                <div class="invoice p-3 mb-3">
+
+                    <div class="row">
+                        <div class="col-12">
+                            <h4>
+                                <i class="fas fa-globe"></i> HÓA ĐƠN MUA HÀNG
+                                <small class="float-right">Ngày xác nhận hóa đơn: @string.Format("{0:dd/MM/yyyy}",DateTime.Now)</small>
+                            </h4>
+                        </div>
+
+                    </div>
+
+                    <div class="row invoice-info">
+                        <div class="col-sm-4 invoice-col">
+                            <b>Mã hóa đơn: </b>@ViewBag.ThongTin.MaHoadon<br>
+                            <b>Số lượng sản phẩm: </b>@Model.Count() <br>
+                            <b>Ngày đặt hàng: </b> @string.Format("{0:dd/MM/yyyy}",ViewBag.ThongTin.Ngaydathang)<br>
+                        </div>
+
+                        <div class="col-sm-4 invoice-col">
+                            
+                            <address>
+                                <strong>Thông tin khách hàng</strong><br>
+                                Tên khách hàng: @ViewBag.ThongTin.TenNguoidung<br>
+                                Số điện thoại: @ViewBag.ThongTin.sdt<br>
+                                Địa chỉ giao hàng: @ViewBag.ThongTin.Diachigiaohang<br>
+                            </address>
+                        </div>
+
+                        <div class="col-sm-4 invoice-col">
+                            
+                            <address>
+                                <strong>Tình trạng hóa đơn</strong><br>
+                                Phương thức thanh toán: @ViewBag.ThongTin.PhuongthucTT<br>
+                                Trạng thái thanh toán: @ViewBag.ThongTin.TrangthaiTT<br>
+                                Trạng thái hóa đơn: <b>@ViewBag.ThongTin.Trangthaihoadon</b><br>
+                            </address>
+                        </div>
+
+                        
+
+                    </div>
+
+
+                    <div class="row">
+                        <table id="lst" class="table table-bordered text-center">
+                            <thead class="bg-dark text-light">
+                             
+                                    <tr>
+                                        <th>Mã sản phẩm</th>
+                                        <th>Tên sản phẩm</th>
+                                        <th>Ảnh sản phẩm</th>
+                                        <th>Size</th>
+                                        <th>Số lượng</th>
+                                        <th>Giá gốc</th>
+                                        <th>Mã giảm giá</th>
+                                        <th>Thành tiền</th>
+                                        <th>Trạng thái</th>
+                                        <th>Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody style="border: 0px solid">
+                                    @foreach(var d in Model)
+                                    {
+                                    
+                                    <tr>
+                                            <td hidden>@d.MaHoadon</td>
+                                            <td>@d.MaSanpham</td>
+                                            <td>@d.Ten_Sanpham</td>
+                                            <td>
+                                                <img class="product-image" src="~/img/product/@d.Link1" />
+                                            </td>
+                                            <td>@d.size</td>
+                                            <td>@d.Soluong</td>
+                                            <td>@string.Format("{0:N0}", d.Giagoc)</td>
+                                            <td>@d.MaGiamgia</td>
+                                            <td>
+                                                @string.Format("{0:N0}", d.Giagoc * (1 - d.Tilegiamgia) * d.Soluong)
+                                            </td>
+                                        <td style="color:red">
+                                                @if (d.Trangthai == null)
+                                                {
+                                                    var chuoi1 = "Chờ xử lý";
+                                                    @Html.Raw(chuoi1);
+                                                }
+                                            else
+                                            {
+                                                <i class="far fa-check fa-solid nav-icon" style="color:forestgreen"></i>
+                                                
+                                            }
+                                        </td>
+                                        <td hidden>@d.Trangthai</td>
+                                        <td>
+                                            @if(d.Trangthai == null){
+                                                <a onclick="Hoi(event)" class="btn btn-sn btn-primary" asp-action="XacNhan_SanPham" asp-controller="SanPham" asp-route-MaHoadon="@ViewBag.ThongTin.MaHoadon" asp-route-MaSanpham="@d.MaSanpham" asp-route-size="@d.size" asp-route-Soluong="@d.Soluong">Xác nhận</a>
+                                            }
+                                           
+                                        </td>
+                                            
+                                        </tr>
+                                        
+                                    }
+                                    
+                                </tbody>
+                            </table>
+                        </div>
+
+                        
+
+                        <div class="col-6">
+                            
+                            <div class="table-responsive">
+                                <table class="table">
+                                    <tr>
+                                        <th style="width:50%">Giá:</th>
+                                    <td>@string.Format("{0:N0}", count)</td>
+                                    </tr>
+                                    <tr>
+                                        <th>Phí vận chuyển:</th>
+                                        <td>
+                                        @if (count < 10000000)
+                                        {
+                                            ship = 25000;
+                                            @Html.Raw(string.Format("{0:N0}", ship))
+                                            ;
+                                        }
+                                        else
+                                        {
+                                            ship1 = "Free";
+                                            ship = 0;
+                                            @Html.Raw(ship1)
+                                            ;
+                                        }
+                                    </td>
+                                    </tr>
+                                    <tr>
+                                        <th>Tổng tiền:</th>
+                                    <td>@string.Format("{0:N0}",(count + ship))</td>
+                                    </tr>
+                                </table>
+                            </div>
+                        </div>
+                    @foreach(var d in Model)
+                    {
+                        if(d.Trangthai != null)
+                        {
+                            i++;
+                        }
+                    }
+                    @if (i == @Model.Count())
+                    {
+                        <a onclick="Hoi1(event)" class="btn btn-success float-right" asp-action="XacNhan_HoaDon" asp-controller="SanPham" asp-route-MaHoadon="@ViewBag.ThongTin.MaHoadon" asp-route-MaKhachhang="@ViewBag.ThongTin.MaKhachhang"><i class="far fa-light fa-truck-fast fa-solid nav-icon"></i> Giao hàng</a>
+                    }
+                    </div>
+                </div>
+
+            </div>
+        </div>
+</section>
+<script>
+
+    function Hoi(event) {
+        var result = confirm("Xác nhận sản phẩm?");
+        if (result == true) {
+
+        }
+        else {
+            event.preventDefault();
+            // window.location.href='../SanPham/Index';
+        }
+    }
+    function Hoi1(event) {
+        var result = confirm("Xác nhận giao hàng?");
+        if (result == true) {
+
+        }
+        else {
+            event.preventDefault();
+            // window.location.href='../SanPham/Index';
+        }
+    }
+</script>

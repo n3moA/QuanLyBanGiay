@@ -1,0 +1,71 @@
+﻿<div class="collapse navbar-collapse offset" id="navbarSupportedContent">
+	<ul class="nav navbar-nav menu_nav ml-auto justify-content-center">
+		<li class="nav-item active"><a class="nav-link" href="~/Home">Trang chủ</a></li>
+		<li class="nav-item submenu dropdown">
+			<a href="~/Shop/Index" class="nav-link dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true"
+	  aria-expanded="false">Mua hàng</a>
+			<ul class="dropdown-menu">
+				<li class="nav-item"><a class="nav-link" href="~/Shop/Index">Danh mục</a></li>
+				<li class="nav-item"><a class="nav-link" href="~/Cart/ViewCart">Giỏ hàng</a></li>
+			</ul>
+		</li>
+		<li class="nav-item submenu dropdown">
+			<a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true"
+			   aria-expanded="false">Pages</a>
+			<ul class="dropdown-menu">
+				<li class="nav-item"><a class="nav-link" href="#">Tracking</a></li>
+				<li class="nav-item"><a class="nav-link" href="#">Elements</a></li>
+			</ul>
+		</li>
+		@if (ViewBag.User is not null)
+		{
+			<li class="nav-item"><a class="nav-link" href="~/Checkout/ViewBill">Theo dõi đơn hàng</a></li>
+		}
+		<li class="nav-item submenu dropdown">
+			@if (ViewBag.User is not null)
+			{
+				<a class="navbar-brand logo_h" href="~/Home"><img class="rounded-circle shadow-4-strong" style="width:30px;height:30px;" src="/user/img/User/login1.png" alt=""></a>
+
+				<span>  @ViewBag.User</span>
+			}
+			else
+			{
+				<a class="nav-link" href="~/Login" onclick="statebefore()">
+					<svg xmlns="http://www.w3.org/2000/svg" width="20" height="16" fill="currentColor" class="bi bi-person-fill" viewBox="0 0 16 16">
+						<path d="M3 14s-1 0-1-1 1-4 6-4 6 3 6 4-1 1-1 1H3Zm5-6a3 3 0 1 0 0-6 3 3 0 0 0 0 6Z" />
+					</svg>
+				</a>
+			}
+			<ul class="dropdown-menu">
+				<li class="nav-item"><a class="nav-link" href="~/Login" onclick="statebefore()">Đăng nhập/Đăng ký</a></li>
+				<li class="nav-item"><a class="nav-link" href="~/Login/Logout">Đăng xuất</a></li>
+			</ul>
+		</li>
+	</ul>
+	<ul class="nav navbar-nav navbar-right">
+		<li class="nav-item"><a href="~/Cart/ViewCart" class="cart"><span id="Cart_CurentNumber" class="ti-bag">(@ViewBag.cartnumber)</span></a></li>
+		<li class="nav-item">
+			<button class="search"><span class="lnr lnr-magnifier" id="search"></span></button>
+		</li>
+	</ul>
+</div>
+<div>
+	<input type="hidden" id="beforeurl"/>
+</div>
+<script>
+	function statebefore()
+	{
+		var currentURL = window.location.href;
+		if (currentURL.includes('AddToCart'))
+		{
+			currentURL = "/Cart/ViewCart";
+		}
+		$.ajax({
+			url: "/Login/SetURL",
+			type: "GET",
+			data: {
+				url: currentURL
+			}
+		});
+	}
+</script>

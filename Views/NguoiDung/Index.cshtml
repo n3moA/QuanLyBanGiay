@@ -1,0 +1,86 @@
+﻿@model X.PagedList.IPagedList<QuanLyBanGiay_ADMIN.Models.ThongTinNguoiDung>
+@using X.PagedList.Mvc.Core
+@using X.PagedList.Web.Common;
+@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Views/Shared/_LayoutAdmin.cshtml";
+}
+
+<style>
+    .table td, .table th {
+        padding: 0.75rem;
+        vertical-align: middle;
+        border-top: 1px solid #dee2e6;
+    }
+</style>
+
+
+<div class="container">
+    <div class="row">
+        <div class="col-12 offset">
+            <h1 class="text-info text-center p-1 border border-dark">TÀI KHOẢN NGƯỜI DÙNG</h1>
+            <form action="~/NguoiDung/Index" method="post">
+                <div class="form-group">
+                    <input type="Text" id="enter" name="TenNguoidung" placeholder="enter here">
+                    <input type="submit" class="btn btn-sm btn-warning m-1 p-1 text-light" value="Search"><br />
+                </div><hr />
+            </form>
+            <table class="table table-bordered text-center">
+                <thead class="bg-dark text-light">
+                    <tr>
+                        <th>Mã người dùng</th>
+                        <th>Username</th>
+                        <th>Password</th>
+                        <th>Tên người dùng</th>
+                        <th>Giới tính</th>
+                        <th>Chức vụ</th>
+                        <th>Số điện thoại</th>
+                        <th>Địa chỉ</th>
+                        <th colspan="2">Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var d in Model)
+                    {
+                        <tr>
+                            <td>@d.MaNguoidung</td>
+                            <td>@d.Username</td>
+                            <td>@d.Password</td>
+                            <td>@d.TenNguoidung</td>
+                            <td>@d.Gioitinh</td>
+                            <td>@d.Chucvu</td>
+                            <td>@d.SodienthoaiNv</td>
+                            <td>@d.DiachiNv</td>
+                            <td>
+                                <a class="btn btn-sn btn-primary" asp-action="UpdateNguoiDung" asp-controller="NguoiDung" asp-route-MaNguoidung="@d.MaNguoidung">Details</a>
+                            </td>
+                            <td>
+                                <a class="btn btn-sn btn-warning" asp-action="LichSu" asp-controller="NguoiDung" asp-route-Ma_Nguoidung="@d.MaNguoidung">History</a>
+                            </td>
+                        </tr>
+                    }
+
+                </tbody>
+            </table>
+
+        </div>
+    </div>
+</div>
+<div class="page-info" style="text-align:center">
+    Trang @(Model.PageNumber) trên @Model.PageCount
+</div>
+<div class="card-tools">
+    <ul class="pagination pagination-sm">
+        @Html.PagedListPager(Model,page=>Url.Action("Index","NguoiDung",new{page = page,TenNguoidung = ViewBag.TenND}), new PagedListRenderOptions{
+        LiElementClasses = new string[] {"page-item"},
+        PageClasses = new string[] {"page-link"},
+        Display = PagedListDisplayMode.IfNeeded,
+        MaximumPageNumbersToDisplay = 3, // Số trang tối đa để hiển thị
+        EllipsesFormat = "&#8230;", // Định dạng dấu ba chấm
+        })
+
+    </ul>
+</div>
+
+
+
